@@ -18,6 +18,7 @@ type MessageWriterProps = {
 const MessageWriter: React.FC<MessageWriterProps> = ({onSend}) => {
   const textInputRef = useRef<TextInput>(null);
   const [text, setText] = React.useState('');
+  const [partialResults, setPartialResults] = React.useState<string[]>([]);
 
   const keyboardShown = useKeyboardStatus();
 
@@ -28,29 +29,25 @@ const MessageWriter: React.FC<MessageWriterProps> = ({onSend}) => {
     console.log('staonSpeechRecognizedrt');
   };
   const onSpeechEnd = (e: any) => {
-    console.log('onSpeechEnd');
+    console.log('end', e);
   };
-  const onSpeechError = (e: any) => {
-    console.log('onSpeechError');
-  };
+
   const onSpeechResults = (e: any) => {
-    console.log('onSpeechResults', e);
+    console.log('restuyl', e.value);
   };
   const onSpeechPartialResults = (e: any) => {
-    console.log('onSpeechPartialResults');
-  };
-  const onSpeechVolumeChanged = (e: any) => {
-    console.log('onSpeechVolumeChanged');
+    if (e.value.length > 0) {
+      setText(e.value[0]);
+    }
   };
 
   useEffect(() => {
     Voice.onSpeechStart = onSpeechStart;
     Voice.onSpeechRecognized = onSpeechRecognized;
-    Voice.onSpeechEnd = onSpeechEnd;
-    Voice.onSpeechError = onSpeechError;
+
     Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechEnd = onSpeechEnd;
     Voice.onSpeechPartialResults = onSpeechPartialResults;
-    Voice.onSpeechVolumeChanged = onSpeechVolumeChanged;
 
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
