@@ -5,6 +5,7 @@ import {
   TextInput,
   StyleProp,
   TextStyle,
+  Text,
 } from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -18,24 +19,23 @@ type MessageWriterProps = {
 const MessageWriter: React.FC<MessageWriterProps> = ({onSend}) => {
   const textInputRef = useRef<TextInput>(null);
   const [text, setText] = React.useState('');
-  const [partialResults, setPartialResults] = React.useState<string[]>([]);
+  const [micState, setMicState] = React.useState<'on' | 'off'>('off');
 
   const keyboardShown = useKeyboardStatus();
 
   const onSpeechStart = (e: any) => {
-    console.log('start', e.nativeEvent);
+    setMicState('on');
   };
-  const onSpeechRecognized = (e: any) => {
-    console.log('staonSpeechRecognizedrt');
-  };
+  const onSpeechRecognized = (e: any) => {};
   const onSpeechEnd = (e: any) => {
-    console.log('end', e);
+    setMicState('off');
   };
 
   const onSpeechResults = (e: any) => {
-    console.log('restuyl', e.value);
+    setMicState('off');
   };
   const onSpeechPartialResults = (e: any) => {
+    console.log('e.value', e.value);
     if (e.value.length > 0) {
       setText(e.value[0]);
     }
@@ -51,6 +51,7 @@ const MessageWriter: React.FC<MessageWriterProps> = ({onSend}) => {
 
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
+      setMicState('off');
     };
   }, []);
 
@@ -58,7 +59,17 @@ const MessageWriter: React.FC<MessageWriterProps> = ({onSend}) => {
   const handleSend = () => {
     onSend(text);
     setText('');
+    setMicState('off');
+    stopRecognizing();
     textInputRef.current?.blur();
+  };
+
+  const stopRecognizing = async () => {
+    try {
+      await Voice.stop();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const startRecognizing = async () => {
@@ -75,7 +86,11 @@ const MessageWriter: React.FC<MessageWriterProps> = ({onSend}) => {
         onPress={() => {
           startRecognizing();
         }}>
-        <Icon name="mic" size={25} />
+        <Icon
+          name="mic"
+          size={25}
+          color={micState === 'off' ? '#bababa' : 'red'}
+        />
       </TouchableOpacity>
       <TextInput
         ref={textInputRef}

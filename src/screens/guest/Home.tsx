@@ -1,34 +1,54 @@
 import React from 'react';
 import {Text, View} from '../../components/controls';
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {ImageBackground, StyleSheet, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/FontAwesome6';
+import {getCloseMatches} from '../../lib/difflib';
 
 const Home = () => {
+  console.log('diff', getCloseMatches('ass', ['apsde', 'asadd', 'pefffach']));
   const nav = useNavigation();
   const gotoTrainMachine = () => {
     nav.navigate('TrainScreen');
   };
 
+  const gotoController = () => {
+    nav.navigate('Controller');
+  };
+
   return (
     <View style={style.container}>
-      <View style={style.boxContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            gotoTrainMachine();
-          }}
-          style={style.box}>
-          <Text style={style.text}>Train Machine</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={style.box}>
-          <Text style={style.text}>Smart Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={style.box}>
-          <Text style={style.text}>Bike Control</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={style.box}>
-          <Text style={style.text}>Train</Text>
-        </TouchableOpacity>
-      </View>
+      <ImageBackground
+        style={style.bg}
+        source={require('../../images/bg.jpg')}
+        resizeMode="cover">
+        <View style={style.boxContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              gotoTrainMachine();
+            }}
+            style={style.box}>
+            <Icon name="microchip" size={50} color={'#fff'} />
+            <Text style={style.text}>Train Machine</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={style.box}>
+            <Icon name="house-laptop" size={50} color={'#fff'} />
+            <Text style={style.text}>Smart Home</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={style.box}>
+            <Icon name="motorcycle" size={50} color={'#fff'} />
+            <Text style={style.text}>Bike Control</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={style.box}
+            onPress={() => {
+              gotoController();
+            }}>
+            <Icon name="gear" size={50} color={'#fff'} />
+            <Text style={style.text}>Settings</Text>
+          </TouchableOpacity>
+        </View>
+      </ImageBackground>
     </View>
   );
 };
@@ -50,11 +70,21 @@ const style = StyleSheet.create({
     height: 150,
     padding: 10,
     borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    rowGap: 5,
   },
   boxContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  bg: {
+    width: '100%',
+    flex: 1,
+    alignItems: 'center',
     justifyContent: 'center',
   },
 });

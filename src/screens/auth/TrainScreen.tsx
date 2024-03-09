@@ -1,6 +1,6 @@
 import React from 'react';
 import {MessageWriter, Text, View} from '../../components/controls';
-import {FlatList, StyleSheet} from 'react-native';
+import {FlatList, ImageBackground, StyleSheet} from 'react-native';
 import {msg_data} from '../../data';
 
 const TrainScreen = () => {
@@ -18,19 +18,14 @@ const TrainScreen = () => {
   const renderItem = ({item, index}: {item: (typeof data)[0]; index: any}) => {
     const boxStyle =
       item.type === 'you'
-        ? {backgroundColor: '#0e0d0d'}
+        ? {backgroundColor: '#44a2f5'}
         : {backgroundColor: '#fff'};
 
     const pos = item.type === 'you' ? 'flex-end' : 'flex-start';
     const color = item.type === 'you' ? '#fff' : '#000';
 
     return (
-      <View
-        key={item.id}
-        style={{
-          flexDirection: 'row',
-          justifyContent: pos,
-        }}>
+      <View key={item.id} style={[styles.render, {justifyContent: pos}]}>
         <View style={[styles.content, boxStyle]}>
           <Text style={[styles.text, {color: color}]}>{item.message}</Text>
         </View>
@@ -39,23 +34,30 @@ const TrainScreen = () => {
   };
   return (
     <View style={styles.container}>
-      <FlatList
-        scrollEnabled
-        ref={flatRef}
-        data={data}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-      />
-      <MessageWriter onSend={handleSend} />
+      <ImageBackground
+        style={styles.bg}
+        source={require('../../images/bg.jpg')}
+        resizeMode="cover">
+        <FlatList
+          contentContainerStyle={{
+            backgroundColor: 'transparent',
+          }}
+          scrollEnabled
+          ref={flatRef}
+          data={data}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+        />
+        <MessageWriter onSend={handleSend} />
+      </ImageBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#333',
-    paddingTop: 20,
     flex: 1,
+    backgroundColor: 'transparent',
   },
   content: {
     padding: 10,
@@ -63,9 +65,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     maxWidth: '75%',
     alignSelf: 'flex-start',
+    backgroundColor: 'transparent',
   },
   text: {
     fontSize: 17,
+  },
+  bg: {
+    width: '100%',
+    flex: 1,
+  },
+  render: {
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
   },
 });
 
