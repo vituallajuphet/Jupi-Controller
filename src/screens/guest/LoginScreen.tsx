@@ -87,7 +87,14 @@ const LoginScreen: React.FC<any> = props => {
               style={styles.input}
             />
           </View>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              context.login({
+                email: 'opet',
+                password: '1234',
+              });
+            }}>
             <Text style={styles.btnText}>Login</Text>
           </TouchableOpacity>
           {/* <Button title="Biometric" onPress={prompt} /> */}

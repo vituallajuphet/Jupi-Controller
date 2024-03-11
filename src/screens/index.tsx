@@ -8,9 +8,10 @@ import {
   RegisterScreen,
   SplashScreen,
 } from './guest';
-import {TrainScreen} from './auth';
+import {SmartHomeScreen, TrainScreen} from './auth';
 import TrainHeader from '../components/controls/TrainHeader';
 import {LoginContext} from '../context';
+import TestScreen from './auth/TestScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +43,8 @@ const AppStack = () => {
               component={TrainScreen}
             />
             <Stack.Screen name="Controller" component={Controller} />
+            <Stack.Screen name="SmartHomeScreen" component={SmartHomeScreen} />
+            <Stack.Screen name="TestScreen" component={TestScreen} />
           </>
         ) : (
           <>

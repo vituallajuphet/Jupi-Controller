@@ -1,12 +1,10 @@
 import React from 'react';
-import {Text, View} from '../../components/controls';
+import {Text, View, VoiceCommand} from '../../components/controls';
 import {ImageBackground, StyleSheet, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
-import {getCloseMatches} from '../../lib/difflib';
 
 const Home = () => {
-  console.log('diff', getCloseMatches('ass', ['apsde', 'asadd', 'pefffach']));
   const nav = useNavigation();
   const gotoTrainMachine = () => {
     nav.navigate('TrainScreen');
@@ -31,7 +29,11 @@ const Home = () => {
             <Icon name="microchip" size={50} color={'#fff'} />
             <Text style={style.text}>Train Machine</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={style.box}>
+          <TouchableOpacity
+            style={style.box}
+            onPress={() => {
+              nav.navigate('SmartHomeScreen');
+            }}>
             <Icon name="house-laptop" size={50} color={'#fff'} />
             <Text style={style.text}>Smart Home</Text>
           </TouchableOpacity>
@@ -48,6 +50,7 @@ const Home = () => {
             <Text style={style.text}>Settings</Text>
           </TouchableOpacity>
         </View>
+        <VoiceCommand />
       </ImageBackground>
     </View>
   );
