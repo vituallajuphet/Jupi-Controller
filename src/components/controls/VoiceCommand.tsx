@@ -3,6 +3,7 @@ import React, {useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Voice from '@react-native-voice/voice';
 import axios from 'axios';
+import {AI_API} from '../../utils';
 
 const URL = 'http://192.168.1.5/';
 
@@ -38,7 +39,7 @@ const VoiceCommand = () => {
 
   const stopRecognizing = async text => {
     try {
-      handleCommand(text);
+      handleRequest(text);
       await Voice.stop();
     } catch (e) {
       console.error(e);
@@ -53,61 +54,14 @@ const VoiceCommand = () => {
     }
   };
 
-  const handleCommand = async text => {
-    let url: string = '';
-    if (
-      text.includes('on ') &&
-      text.includes('light') &&
-      text.includes('one')
-    ) {
-      url = `${URL}light-1-on`;
-    } else if (
-      text.includes('on') &&
-      text.includes('light') &&
-      (text.includes('two') || text.includes('to'))
-    ) {
-      url = `${URL}light-2-on`;
-    } else if (
-      text.includes('on') &&
-      text.includes('light') &&
-      text.includes('three')
-    ) {
-      url = `${URL}light-3-on`;
-    } else if (
-      text.includes('on') &&
-      text.includes('light') &&
-      (text.includes('four') || text.includes('for'))
-    ) {
-      url = `${URL}light-4-on`;
-    } else if (
-      text.includes('off') &&
-      text.includes('light') &&
-      text.includes('one')
-    ) {
-      url = `${URL}light-1-off`;
-    } else if (
-      text.includes('off') &&
-      text.includes('light') &&
-      (text.includes('two') || text.includes('to'))
-    ) {
-      url = `${URL}light-2-off`;
-    } else if (
-      text.includes('off') &&
-      text.includes('light') &&
-      text.includes('three')
-    ) {
-      url = `${URL}light-3-off`;
-    } else if (
-      text.includes('off') &&
-      text.includes('light') &&
-      (text.includes('four') || text.includes('for'))
-    ) {
-      url = `${URL}light-4-off`;
+  const handleRequest = async (text: string) => {
+    try {
+      const data = await axios.post(AI_API, {message: text});
+
+      console.log('data', data.data);
+    } catch (error) {
+      console.log('error', error);
     }
-
-    console.log('url', url);
-
-    await axios.get(url);
   };
 
   return (
