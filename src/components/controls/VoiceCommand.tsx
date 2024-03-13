@@ -3,12 +3,13 @@ import React, {useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Voice from '@react-native-voice/voice';
 import axios from 'axios';
-import {AI_API} from '../../utils';
+import {AI_API, getAIResponse} from '../../utils';
 
 const URL = 'http://192.168.1.5/';
 
 const VoiceCommand = () => {
   const [theText, setText] = React.useState<any>('');
+  const [loading, setLoading] = React.useState<boolean>(false);
   const onSpeechStart = (e: any) => {};
   const onSpeechRecognized = (e: any) => {};
   const onSpeechEnd = (e: any) => {
@@ -55,10 +56,12 @@ const VoiceCommand = () => {
   };
 
   const handleRequest = async (text: string) => {
+    setLoading(true);
     try {
       const data = await axios.post(AI_API, {message: text});
 
-      console.log('data', data.data);
+      getAIResponse(data.data);
+      setLoading(false);
     } catch (error) {
       console.log('error', error);
     }
@@ -81,6 +84,9 @@ const VoiceCommand = () => {
       </TouchableOpacity>
       <View>
         <Text>{theText}</Text>
+      </View>
+      <View>
+        <Text>{loading ? 'loading' : ''}</Text>
       </View>
     </View>
   );
