@@ -1,11 +1,13 @@
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Voice from '@react-native-voice/voice';
 import axios from 'axios';
 import {AI_API, getAIResponse} from '../../utils';
+import {DataContext} from '../../context/dataContext';
 
 const VoiceCommand = () => {
+  const context = useContext(DataContext);
   const [theText, setText] = React.useState<any>('');
   const [loading, setLoading] = React.useState<boolean>(false);
   const onSpeechStart = (e: any) => {};
@@ -58,7 +60,7 @@ const VoiceCommand = () => {
     try {
       const data = await axios.post(AI_API, {message: text});
 
-      getAIResponse(data.data);
+      getAIResponse(data.data, context);
       setLoading(false);
     } catch (error) {
       console.log('error', error);

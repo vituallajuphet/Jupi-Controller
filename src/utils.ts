@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const AI_API = 'https://jupifund.online/api/get-ai-response';
 
-export const getAIResponse = async (data: any) => {
+export const getAIResponse = async (data: any, context?: any) => {
   if (data.intents?.length > 0) {
     const intent = data.intents[0];
     if (intent.name === 'set_command' && intent.confidence > 0.8) {
@@ -32,15 +32,20 @@ export const getAIResponse = async (data: any) => {
         ),
       );
 
-      console.log('isTurnOn', switchTo);
-
-      if (toTogle?.value?.length) {
-        const values = toTogle?.value;
-
-        for (let i = 0; i < values.length; i++) {
-          const value = values[i];
-          const url = 'http://';
-        }
+      if (toTogle?.value?.length > 0) {
+        const URL = context?.settings?.server;
+        console.log('sname', switchTo);
+        toTogle?.value?.map(val => {
+          context?.settings?.switches?.map(sw => {
+            if (sw.name.toLowerCase() === val.body.toLowerCase()) {
+              const url =
+                switchTo === 'turn_on'
+                  ? `${URL}light-${sw.id}-on`
+                  : `${URL}light-${sw.id}-off`;
+              axios.get(url);
+            }
+          });
+        });
       }
     } else {
       console.log('No intent found');
