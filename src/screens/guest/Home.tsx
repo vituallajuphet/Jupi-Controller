@@ -11,7 +11,7 @@ const Home = () => {
   };
 
   const gotoController = () => {
-    nav.navigate('Controller');
+    nav.navigate('Settings');
   };
 
   return (

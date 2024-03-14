@@ -5,7 +5,7 @@ import Voice from '@react-native-voice/voice';
 import axios from 'axios';
 import {AI_API, getAIResponse} from '../../utils';
 
-const URL = 'http://192.168.1.5/';
+const URL = 'http://192.168.1.6/';
 
 const VoiceCommand = () => {
   const [theText, setText] = React.useState<any>('');

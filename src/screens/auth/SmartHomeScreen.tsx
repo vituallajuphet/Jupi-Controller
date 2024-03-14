@@ -5,12 +5,17 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import axios from 'axios';
-
-const URL = 'http://192.168.1.5/';
+import {DataContext} from '../../context/dataContext';
 
 const SmartHomeScreen = () => {
+  const context = useContext(DataContext);
+
+  const switches = context.settings.switches;
+
+  const URL = context.settings.server;
+
   const [light1State, setLight1State] = React.useState('off');
   const [light2State, setLight2State] = React.useState('off');
   const [light3State, setLight3State] = React.useState('off');
@@ -20,8 +25,6 @@ const SmartHomeScreen = () => {
     const url =
       light1State === 'off' ? `${URL}light-1-on` : `${URL}light-1-off`;
     const data = await axios.get(url);
-
-    console.log('data', data.data);
 
     setLight1State(light1State === 'off' ? 'on' : 'off');
   };
@@ -52,12 +55,19 @@ const SmartHomeScreen = () => {
     setLight4State(light4State === 'off' ? 'on' : 'off');
   };
 
+  const colorActive = (isActive: boolean) => {
+    return isActive ? '#00ff00' : '#f76c6c';
+  };
+
   return (
     <View style={styles.container}>
       <ImageBackground
         style={styles.bg}
         source={require('../../images/bg.jpg')}
         resizeMode="cover">
+        <View style={{padding: 20, paddingBottom: 10}}>
+          <Text style={styles.text2}>Manual Remote</Text>
+        </View>
         <View
           style={{
             flexDirection: 'row',
@@ -70,16 +80,30 @@ const SmartHomeScreen = () => {
             onPress={() => {
               handePress1();
             }}>
-            <Text style={styles.text}>On Light 1</Text>
-            <Text style={[styles.text, styles.text2]}>{light1State}</Text>
+            <Text style={styles.text}>{switches[0].name}</Text>
+            <Text
+              style={[
+                styles.text,
+                styles.text2,
+                {color: colorActive(light1State === 'on')},
+              ]}>
+              {light1State}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               handePress2();
             }}
             style={styles.boxx}>
-            <Text style={styles.text}>On Light 2</Text>
-            <Text style={[styles.text, styles.text2]}>{light2State}</Text>
+            <Text style={styles.text}>{switches[1].name}</Text>
+            <Text
+              style={[
+                styles.text,
+                styles.text2,
+                {color: colorActive(light2State === 'on')},
+              ]}>
+              {light2State}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -87,16 +111,30 @@ const SmartHomeScreen = () => {
               handePress3();
             }}
             style={styles.boxx}>
-            <Text style={styles.text}>On both lights</Text>
-            <Text style={[styles.text, styles.text2]}>{light3State}</Text>
+            <Text style={styles.text}>{switches[2].name}</Text>
+            <Text
+              style={[
+                styles.text,
+                styles.text2,
+                {color: colorActive(light3State === 'on')},
+              ]}>
+              {light3State}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               handePress4();
             }}
             style={styles.boxx}>
-            <Text style={styles.text}>Off both lights</Text>
-            <Text style={[styles.text, styles.text2]}>{light4State}</Text>
+            <Text style={styles.text}>{switches[3].name}</Text>
+            <Text
+              style={[
+                styles.text,
+                styles.text2,
+                {color: colorActive(light4State === 'on')},
+              ]}>
+              {light4State}
+            </Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
