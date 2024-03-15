@@ -6,22 +6,23 @@ export const getAIResponse = async (data: any, context?: any) => {
   if (data.intents?.length > 0) {
     const intent = data.intents[0];
     if (intent.name === 'set_command' && intent.confidence > 0.8) {
-      const entities = Object.entries(data.entities).map(([key, value]) => {
-        return {
-          entity: key,
-          value: value,
-        };
-      });
+      const entities = Object.entries(data.entities).map(([key, value]) => ({
+        entity: key,
+        value: value,
+      }));
 
-      const toTogle = entities.find(ent =>
+      const toToggle = entities.find(ent =>
         ent.entity?.includes('switch_to_toggle'),
       );
 
-      const isTurnOn = ent => {
+      const getNumber = entities.find(ent =>
+        ent.entity?.includes('wit$number'),
+      );
+
+      const isTurnOn = (ent: any) => {
         if (ent?.value?.length > 0) {
           return ent?.value[0].name;
         }
-
         return 'invalid';
       };
 
@@ -32,16 +33,28 @@ export const getAIResponse = async (data: any, context?: any) => {
         ),
       );
 
-      if (toTogle?.value?.length > 0) {
+      if (toToggle?.value?.length > 0) {
         const URL = context?.settings?.server;
         console.log('sname', switchTo);
-        toTogle?.value?.map(val => {
-          context?.settings?.switches?.map(sw => {
-            if (sw.name.toLowerCase() === val.body.toLowerCase()) {
-              const url =
+        toToggle?.value?.forEach(val => {
+          context?.settings?.switches?.forEach(sw => {
+            let url = '';
+            let compareString = val.body.toLowerCase();
+
+            if (getNumber?.value?.length > 0) {
+              if (val.body.toLowerCase() === 'switch') {
+                compareString = `switch ${getNumber?.value[0].value}`;
+              }
+            }
+
+            if (sw.name.toLowerCase() === compareString.toLowerCase()) {
+              url =
                 switchTo === 'turn_on'
                   ? `${URL}light-${sw.id}-on`
                   : `${URL}light-${sw.id}-off`;
+            }
+
+            if (url) {
               axios.get(url);
             }
           });

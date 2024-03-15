@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import React, {useContext, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Voice from '@react-native-voice/voice';
@@ -56,6 +56,10 @@ const VoiceCommand = () => {
   };
 
   const handleRequest = async (text: string) => {
+    if (!text) {
+      Alert.alert('Please say something');
+    }
+
     setLoading(true);
     try {
       const data = await axios.post(AI_API, {message: text});
@@ -64,6 +68,7 @@ const VoiceCommand = () => {
       setLoading(false);
     } catch (error) {
       console.log('error', error);
+      setLoading(false);
     }
   };
 
