@@ -5,14 +5,16 @@ import {
   ImageBackground,
   TouchableOpacity,
 } from 'react-native';
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import axios from 'axios';
-import {DataContext} from '../../context/dataContext';
+import { DataContext } from '../../context/dataContext';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Header from '../../components/controls/Header';
 
-const SmartHomeScreen = () => {
+const SmartHomeScreen = (props) => {
   const context = useContext(DataContext);
 
-  const switches = context.settings.switches;
+  const switches = context.settings.switches || [];
 
   const URL = context.settings.server;
 
@@ -60,85 +62,92 @@ const SmartHomeScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        style={styles.bg}
-        source={require('../../images/bg.jpg')}
-        resizeMode="cover">
-        <View style={{padding: 20, paddingBottom: 10}}>
-          <Text style={styles.text2}>Manual Remote</Text>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            gap: 10,
-            padding: 20,
-            flexWrap: 'wrap',
-          }}>
-          <TouchableOpacity
-            style={styles.boxx}
-            onPress={() => {
-              handePress1();
-            }}>
-            <Text style={styles.text}>{switches[0].name}</Text>
-            <Text
-              style={[
-                styles.text,
-                styles.text2,
-                {color: colorActive(light1State === 'on')},
-              ]}>
-              {light1State}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              handePress2();
-            }}
-            style={styles.boxx}>
-            <Text style={styles.text}>{switches[1].name}</Text>
-            <Text
-              style={[
-                styles.text,
-                styles.text2,
-                {color: colorActive(light2State === 'on')},
-              ]}>
-              {light2State}
-            </Text>
-          </TouchableOpacity>
+    <>
 
-          <TouchableOpacity
-            onPress={() => {
-              handePress3();
+      <View style={styles.container}>
+
+        <ImageBackground
+          style={styles.bg}
+          source={require('../../images/bg.jpg')}
+          resizeMode="cover">
+          <Header
+            title='Smart Home'
+            onBack={() => {
+              props.navigation.goBack();
             }}
-            style={styles.boxx}>
-            <Text style={styles.text}>{switches[2].name}</Text>
-            <Text
-              style={[
-                styles.text,
-                styles.text2,
-                {color: colorActive(light3State === 'on')},
-              ]}>
-              {light3State}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              handePress4();
-            }}
-            style={styles.boxx}>
-            <Text style={styles.text}>{switches[3].name}</Text>
-            <Text
-              style={[
-                styles.text,
-                styles.text2,
-                {color: colorActive(light4State === 'on')},
-              ]}>
-              {light4State}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
-    </View>
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: 10,
+              padding: 20,
+              flexWrap: 'wrap',
+            }}>
+            <TouchableOpacity
+              style={styles.boxx}
+              onPress={() => {
+                handePress1();
+              }}>
+              <Text style={styles.text}>{switches[0].name}</Text>
+              <Text
+                style={[
+                  styles.text,
+                  styles.text2,
+                  { color: colorActive(light1State === 'on') },
+                ]}>
+                {light1State}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                handePress2();
+              }}
+              style={styles.boxx}>
+              <Text style={styles.text}>{switches[1].name}</Text>
+              <Text
+                style={[
+                  styles.text,
+                  styles.text2,
+                  { color: colorActive(light2State === 'on') },
+                ]}>
+                {light2State}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                handePress3();
+              }}
+              style={styles.boxx}>
+              <Text style={styles.text}>{switches[2].name}</Text>
+              <Text
+                style={[
+                  styles.text,
+                  styles.text2,
+                  { color: colorActive(light3State === 'on') },
+                ]}>
+                {light3State}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                handePress4();
+              }}
+              style={styles.boxx}>
+              <Text style={styles.text}>{switches[3].name}</Text>
+              <Text
+                style={[
+                  styles.text,
+                  styles.text2,
+                  { color: colorActive(light4State === 'on') },
+                ]}>
+                {light4State}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
+      </View>
+    </>
   );
 };
 

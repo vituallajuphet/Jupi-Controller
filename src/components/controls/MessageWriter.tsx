@@ -7,7 +7,7 @@ import {
   TextStyle,
   Text,
 } from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import React, { useEffect, useRef } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import useKeyboardStatus from '../../hooks';
 import Voice from '@react-native-voice/voice';
@@ -16,7 +16,7 @@ type MessageWriterProps = {
   onSend: (message: string) => void;
 };
 
-const MessageWriter: React.FC<MessageWriterProps> = ({onSend}) => {
+const MessageWriter: React.FC<MessageWriterProps> = ({ onSend }) => {
   const textInputRef = useRef<TextInput>(null);
   const [text, setText] = React.useState('');
   const [micState, setMicState] = React.useState<'on' | 'off'>('off');
@@ -26,7 +26,7 @@ const MessageWriter: React.FC<MessageWriterProps> = ({onSend}) => {
   const onSpeechStart = (e: any) => {
     setMicState('on');
   };
-  const onSpeechRecognized = (e: any) => {};
+  const onSpeechRecognized = (e: any) => { };
   const onSpeechEnd = (e: any) => {
     setMicState('off');
   };
@@ -55,7 +55,7 @@ const MessageWriter: React.FC<MessageWriterProps> = ({onSend}) => {
     };
   }, []);
 
-  const keyboardStyle: StyleProp<TextStyle> = keyboardShown ? {flex: 1} : {};
+  const keyboardStyle: StyleProp<TextStyle> = keyboardShown ? { flex: 1 } : {};
   const handleSend = () => {
     onSend(text);
     setText('');

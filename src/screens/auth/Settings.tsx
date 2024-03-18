@@ -6,10 +6,12 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
-import {Text, Textfield} from '../../components/controls';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {DataContext} from '../../context/dataContext';
+import React, { useContext, useEffect, useState } from 'react';
+import { Text, Textfield } from '../../components/controls';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { DataContext } from '../../context/dataContext';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Header from '../../components/controls/Header';
 
 const Settings = props => {
   const context = useContext(DataContext);
@@ -22,13 +24,13 @@ const Settings = props => {
   useEffect(() => {
     setData(context.settings);
 
-    return () => {};
+    return () => { };
   }, []);
 
   const render = () => {
     if (!data.switches.length) {
       return (
-        <View style={{flex: 1, justifyContent: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
           <ActivityIndicator size="large" color="#fff" />
         </View>
       );
@@ -44,96 +46,104 @@ const Settings = props => {
       idx?: number;
     }) => {
       if (id === 'server') {
-        setData({...data, server: text});
+        setData({ ...data, server: text });
       } else {
         let switches = data.switches;
-        switches[idx] = {...switches[idx], name: text};
-        setData({...data, switches});
+        switches[idx] = { ...switches[idx], name: text };
+        setData({ ...data, switches });
       }
     };
 
     return (
-      <KeyboardAwareScrollView style={{flex: 1}}>
-        <View style={styles.content}>
-          <Text style={styles.text2}>Settings</Text>
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Server IP Address</Text>
-            <Textfield
-              value={data.server}
-              onChangeText={text => {
-                handleChange({
-                  id: 'server',
-                  text,
-                });
-              }}
-            />
-          </View>
+      <>
+        <Header
+          title='Settings'
+          onBack={() => props.navigation.goBack()}
+        />
+        <KeyboardAwareScrollView style={{ flex: 1 }}>
+          <View style={styles.content}>
 
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Switch 1</Text>
-            <Textfield
-              value={data.switches[0].name}
-              onChangeText={text => {
-                handleChange({
-                  id: 'switches',
-                  text,
-                  idx: 0,
-                });
-              }}
-            />
-          </View>
 
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Switch 2</Text>
-            <Textfield
-              value={data.switches[1].name}
-              onChangeText={text => {
-                handleChange({
-                  id: '1',
-                  text,
-                  idx: 1,
-                });
-              }}
-            />
-          </View>
+            <View style={[styles.textContainer]}>
 
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Switch 3</Text>
-            <Textfield
-              onChangeText={text => {
-                handleChange({
-                  id: '1',
-                  text,
-                  idx: 2,
-                });
-              }}
-              value={data.switches[2].name}
-            />
-          </View>
+              <Text style={styles.text}>Server IP Address</Text>
+              <Textfield
+                value={data.server}
+                onChangeText={text => {
+                  handleChange({
+                    id: 'server',
+                    text,
+                  });
+                }}
+              />
+            </View>
 
-          <View style={styles.textContainer}>
-            <Text style={styles.text}>Switch 4</Text>
-            <Textfield
-              onChangeText={text => {
-                handleChange({
-                  id: '1',
-                  text,
-                  idx: 3,
-                });
-              }}
-              value={data.switches[3].name}
-            />
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>Switch 1</Text>
+              <Textfield
+                value={data.switches[0].name}
+                onChangeText={text => {
+                  handleChange({
+                    id: 'switches',
+                    text,
+                    idx: 0,
+                  });
+                }}
+              />
+            </View>
+
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>Switch 2</Text>
+              <Textfield
+                value={data.switches[1].name}
+                onChangeText={text => {
+                  handleChange({
+                    id: '1',
+                    text,
+                    idx: 1,
+                  });
+                }}
+              />
+            </View>
+
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>Switch 3</Text>
+              <Textfield
+                onChangeText={text => {
+                  handleChange({
+                    id: '1',
+                    text,
+                    idx: 2,
+                  });
+                }}
+                value={data.switches[2].name}
+              />
+            </View>
+
+            <View style={styles.textContainer}>
+              <Text style={styles.text}>Switch 4</Text>
+              <Textfield
+                onChangeText={text => {
+                  handleChange({
+                    id: '1',
+                    text,
+                    idx: 3,
+                  });
+                }}
+                value={data.switches[3].name}
+              />
+            </View>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => {
+                context.setSettings(data);
+                Alert.alert('Settings Saved');
+              }}>
+              <Text style={styles.btnText}>Save Settings</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              context.setSettings(data);
-              Alert.alert('Settings Saved');
-            }}>
-            <Text style={styles.btnText}>Save Settings</Text>
-          </TouchableOpacity>
-        </View>
-      </KeyboardAwareScrollView>
+        </KeyboardAwareScrollView>
+      </>
     );
   };
 
@@ -158,7 +168,6 @@ const styles = StyleSheet.create({
   text2: {
     fontWeight: 'bold',
     fontSize: 30,
-    marginBottom: 20,
   },
   boxx: {
     padding: 10,

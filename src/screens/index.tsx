@@ -1,10 +1,10 @@
-import React, {useContext, useState} from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigationContainer} from '@react-navigation/native';
-import {Home, LoginScreen, RegisterScreen, SplashScreen} from './guest';
-import {Settings, SmartHomeScreen, TrainScreen} from './auth';
+import React, { useContext, useState } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import { Home, LoginScreen, RegisterScreen, SplashScreen } from './guest';
+import { Settings, SmartHomeScreen, TrainScreen } from './auth';
 import TrainHeader from '../components/controls/TrainHeader';
-import {LoginContext} from '../context';
+import { LoginContext } from '../context';
 import TestScreen from './auth/TestScreen';
 
 const Stack = createNativeStackNavigator();
@@ -16,7 +16,7 @@ const AppStack = () => {
 
   setTimeout(() => {
     setStarted(true);
-  }, 3000);
+  }, 1000);
 
   const screens = () => {
     return started ? (

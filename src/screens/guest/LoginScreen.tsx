@@ -1,6 +1,6 @@
-import React, {useContext, useEffect, useState} from 'react';
-import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
-import {Text, View} from '../../components/controls';
+import React, { useContext, useEffect, useState } from 'react';
+import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
+import { Text, View } from '../../components/controls';
 import {
   ImageBackground,
   StyleSheet,
@@ -8,14 +8,17 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {LoginContext} from '../../context';
+import { LoginContext } from '../../context';
 
-const rnBiometrics = new ReactNativeBiometrics({allowDeviceCredentials: true});
+const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true });
 
 const LoginScreen: React.FC<any> = props => {
   const context = useContext(LoginContext);
   const [supported, setSupported] = useState(false);
-  const {navigate} = props.navigation;
+  const { navigate } = props.navigation;
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     initializeBiometric();
@@ -23,7 +26,7 @@ const LoginScreen: React.FC<any> = props => {
 
   const initializeBiometric = async () => {
     rnBiometrics.isSensorAvailable().then(resultObject => {
-      const {available, biometryType} = resultObject;
+      const { available, biometryType } = resultObject;
       if (available && biometryType === BiometryTypes.Biometrics) {
         setSupported(true);
       } else {
@@ -48,7 +51,7 @@ const LoginScreen: React.FC<any> = props => {
       })
       .then(resultObject => {
         console.log('resultObject', resultObject);
-        const {success} = resultObject;
+        const { success } = resultObject;
 
         if (success) {
           context.login({
@@ -63,6 +66,16 @@ const LoginScreen: React.FC<any> = props => {
         console.log('biometrics failed');
       });
   };
+
+  const login = () => {
+    context.login({
+      email,
+      password,
+    });
+  }
+
+  const errorStyle = context.errors ? styles.inputError : null;
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -78,11 +91,24 @@ const LoginScreen: React.FC<any> = props => {
             </Text>
           </View>
           <View style={styles.inputContainer}>
-            <TextInput placeholder="Username" style={styles.input} />
+            <TextInput placeholder="Username" style={[styles.input, errorStyle]} onChangeText={(text) => {
+              setEmail(text);
+            }}
+              value={email} />
+            {context.errors ? (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorTxt}>{context?.errors?.email}</Text>
+              </View>
+            ) : null}
           </View>
+
           <View style={styles.inputContainer}>
             <TextInput
               secureTextEntry
+              onChangeText={(text) => {
+                setPassword(text);
+              }}
+              value={password}
               placeholder="Password"
               style={styles.input}
             />
@@ -90,14 +116,10 @@ const LoginScreen: React.FC<any> = props => {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              context.login({
-                email: 'opet',
-                password: '1234',
-              });
+              login();
             }}>
             <Text style={styles.btnText}>Login</Text>
           </TouchableOpacity>
-          {/* <Button title="Biometric" onPress={prompt} /> */}
           {supported && (
             <View style={styles.fingerContainer}>
               <TouchableOpacity
@@ -145,6 +167,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  errorTxt: {
+    color: '#ca8787',
+    fontSize: 15,
+    marginBottom: 10
+  },
+  errorContainer: {
+    backgroundColor: 'transparent',
+    marginTop: 5,
+    paddingHorizontal: 5
+
+  },
   bg: {
     width: '100%',
     flex: 1,
@@ -167,6 +200,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     color: 'white',
     fontSize: 20,
+  },
+  inputError: {
+    borderColor: '#ca8787',
   },
   button: {
     width: '100%',
