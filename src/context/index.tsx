@@ -1,5 +1,5 @@
-import axios, { AxiosError } from 'axios';
-import React, { createContext, useState } from 'react';
+import axios, {AxiosError} from 'axios';
+import React, {createContext, useState} from 'react';
 
 const URL = 'http://localhost:8000/api/jupi/';
 
@@ -15,77 +15,86 @@ type authType = {
 interface LoginContextProps extends authType {
   login: (e?: any) => void;
   logout: (e?: string) => void;
+  register: (e?: any) => void;
   auth: authType;
   errors?: any;
 }
 
-
 export const LoginContext = createContext<LoginContextProps>({
-  login: (e?: any) => { },
-  logout: (e?: string) => { },
+  login: (e?: any) => {},
+  logout: (e?: string) => {},
+  register: (e?: any) => {},
   auth: {
     token: undefined,
     user: undefined,
   },
-  errors: undefined
+  errors: undefined,
 });
 
-export const LoginProvider: React.FC<any> = ({ children }) => {
+export const LoginProvider: React.FC<any> = ({children}) => {
   const [auth, setAuth] = useState<authType>({
     token: undefined,
     user: undefined,
   });
 
-  const [errors, setErrors] = useState<any>(undefined)
+  const [errors, setErrors] = useState<any>(undefined);
 
   const login = async (args?: any) => {
-    const { email, password } = args;
+    const {email, password} = args;
 
     try {
       const data = await axios.post(`${URL}login`, {
         email,
-        password
-      })
+        password,
+      });
 
+      console.log('data', data);
 
-      const { data: responseData } = data
+      const {data: responseData} = data;
       if (responseData?.token) {
         setAuth({
           token: responseData?.token,
           user: responseData.user,
         });
       }
-
     } catch (error: any) {
       if (error.response?.data?.errors) {
-        setErrors(error?.response?.data?.errors)
+        setErrors(error?.response?.data?.errors);
       }
     }
   };
 
-  const logout = async (token: string) => {
+  const register = (data?: any) => {
+    setAuth({
+      token: data.token,
+      user: data.user,
+    });
+  };
 
+  const logout = async (token: string) => {
     try {
-      const data = await axios.post(`${URL}logout`, {
-        token
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
+      const data = await axios.post(
+        `${URL}logout`,
+        {
+          token,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       if (data.data.status === 'success') {
         setAuth({
           token: undefined,
           user: undefined,
         });
       }
-    } catch (error) {
-
-    }
-  }
+    } catch (error) {}
+  };
 
   return (
-    <LoginContext.Provider value={{ auth, login, logout, errors }}>
+    <LoginContext.Provider value={{auth, login, logout, register, errors}}>
       {children}
     </LoginContext.Provider>
   );

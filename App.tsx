@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import AppStack from './src/screens';
-import { LoginProvider } from './src/context';
-import { DataProvider } from './src/context/dataContext';
-import { TailwindProvider } from 'tailwind-rn';
-import { utilities } from './tailwind.json';
+import {LoginProvider} from './src/context';
+import {DataProvider} from './src/context/dataContext';
+import {TailwindProvider} from 'tailwind-rn';
+import {utilities} from './tailwind.json';
 const App = () => {
+  console.log('eeee');
   return (
     <LoginProvider>
       <DataProvider>
@@ -13,7 +14,6 @@ const App = () => {
         </TailwindProvider>
       </DataProvider>
     </LoginProvider>
-
   );
 };
 

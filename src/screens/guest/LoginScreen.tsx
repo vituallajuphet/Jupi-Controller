@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
-import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
-import { Text, View } from '../../components/controls';
+import React, {useContext, useEffect, useState} from 'react';
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
+import {Text, View} from '../../components/controls';
 import {
   ImageBackground,
   StyleSheet,
@@ -8,14 +8,14 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { LoginContext } from '../../context';
+import {LoginContext} from '../../context';
 
-const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true });
+const rnBiometrics = new ReactNativeBiometrics({allowDeviceCredentials: true});
 
 const LoginScreen: React.FC<any> = props => {
   const context = useContext(LoginContext);
   const [supported, setSupported] = useState(false);
-  const { navigate } = props.navigation;
+  const {navigate} = props.navigation;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,7 +26,7 @@ const LoginScreen: React.FC<any> = props => {
 
   const initializeBiometric = async () => {
     rnBiometrics.isSensorAvailable().then(resultObject => {
-      const { available, biometryType } = resultObject;
+      const {available, biometryType} = resultObject;
       if (available && biometryType === BiometryTypes.Biometrics) {
         setSupported(true);
       } else {
@@ -51,7 +51,7 @@ const LoginScreen: React.FC<any> = props => {
       })
       .then(resultObject => {
         console.log('resultObject', resultObject);
-        const { success } = resultObject;
+        const {success} = resultObject;
 
         if (success) {
           context.login({
@@ -72,7 +72,7 @@ const LoginScreen: React.FC<any> = props => {
       email,
       password,
     });
-  }
+  };
 
   const errorStyle = context.errors ? styles.inputError : null;
 
@@ -91,13 +91,17 @@ const LoginScreen: React.FC<any> = props => {
             </Text>
           </View>
           <View style={styles.inputContainer}>
-            <TextInput placeholder="Username" style={[styles.input, errorStyle]} onChangeText={(text) => {
-              setEmail(text);
-            }}
-              value={email} />
+            <TextInput
+              placeholder="Username"
+              style={[styles.input, errorStyle]}
+              onChangeText={text => {
+                setEmail(text);
+              }}
+              value={email}
+            />
             {context.errors ? (
               <View style={styles.errorContainer}>
-                <Text style={styles.errorTxt}>{context?.errors?.email}</Text>
+                <Text style={styles.errorTxt}>{context?.errors?.login}</Text>
               </View>
             ) : null}
           </View>
@@ -105,7 +109,7 @@ const LoginScreen: React.FC<any> = props => {
           <View style={styles.inputContainer}>
             <TextInput
               secureTextEntry
-              onChangeText={(text) => {
+              onChangeText={text => {
                 setPassword(text);
               }}
               value={password}
@@ -170,13 +174,12 @@ const styles = StyleSheet.create({
   errorTxt: {
     color: '#ca8787',
     fontSize: 15,
-    marginBottom: 10
+    marginBottom: 10,
   },
   errorContainer: {
     backgroundColor: 'transparent',
     marginTop: 5,
-    paddingHorizontal: 5
-
+    paddingHorizontal: 5,
   },
   bg: {
     width: '100%',

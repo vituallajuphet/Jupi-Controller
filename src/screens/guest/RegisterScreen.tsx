@@ -9,13 +9,31 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {LoginContext} from '../../context';
+import {REGISTER_USER} from '../../context/actions';
 
 const RegisterScreen: React.FC<any> = props => {
   const context = useContext(LoginContext);
 
+  const [data, setData] = React.useState({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+  });
+
   const {navigate} = props.navigation;
   const navigateLogin = () => {
     navigate('LoginScreen');
+  };
+
+  const register = async () => {
+    const response = await REGISTER_USER(data);
+    if (response.token) {
+      context.register({
+        token: response.token,
+        user: response.user,
+      });
+    }
   };
 
   return (
@@ -33,15 +51,33 @@ const RegisterScreen: React.FC<any> = props => {
             </Text>
           </View>
           <View style={styles.inputContainer}>
-            <TextInput placeholder="Fullname" style={styles.input} />
+            <TextInput
+              placeholder="Fullname"
+              value={data.name}
+              onChangeText={text => {
+                setData({...data, name: text});
+              }}
+              style={styles.input}
+            />
           </View>
           <View style={styles.inputContainer}>
-            <TextInput placeholder="Email Address" style={styles.input} />
+            <TextInput
+              placeholder="Email Address"
+              value={data.email}
+              onChangeText={text => {
+                setData({...data, email: text});
+              }}
+              style={styles.input}
+            />
           </View>
           <View style={styles.inputContainer}>
             <TextInput
               secureTextEntry
               placeholder="Password"
+              value={data.password}
+              onChangeText={text => {
+                setData({...data, password: text});
+              }}
               style={styles.input}
             />
           </View>
@@ -49,10 +85,18 @@ const RegisterScreen: React.FC<any> = props => {
             <TextInput
               secureTextEntry
               placeholder="Confirm Password"
+              value={data.password_confirmation}
+              onChangeText={text => {
+                setData({...data, password_confirmation: text});
+              }}
               style={styles.input}
             />
           </View>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              register();
+            }}>
             <Text style={styles.btnText}>Register</Text>
           </TouchableOpacity>
           {/* <Button title="Biometric" onPress={prompt} /> */}
