@@ -1,11 +1,15 @@
 import { View, Text, StyleSheet } from 'react-native'
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import { st } from '../../utils'
 import Icon from 'react-native-vector-icons/Feather'
 import { Button } from '.'
+import { LoginContext } from '../../context'
+import axios from 'axios'
 
 
 const WeatherHome: FC<any> = (props) => {
+
+  const context = useContext(LoginContext)
 
   return (
     <View style={styles.container}>
@@ -27,7 +31,21 @@ const WeatherHome: FC<any> = (props) => {
           </View>
         </View>
       </View>
-      <Button style={{ marginTop: 20 }}>TURN OFF ALL DEVICES</Button>
+      <Button style={{ marginTop: 20 }}
+
+        onPress={() => {
+          axios.get('http://localhost:8000/api/jupi/getdata/', {
+            headers: {
+              Authorization: `Bearer ${context.auth.token}`
+            }
+          }).then(res => {
+            console.log("ress", res.data)
+          }).catch(err => {
+            console.warn("err", err)
+
+          })
+        }}
+      >TURN OFF ALL DEVICES</Button>
     </View>
   )
 }

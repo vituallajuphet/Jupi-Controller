@@ -65,11 +65,13 @@ export const LoginProvider: React.FC<any> = ({ children }) => {
 
   const logout = async (token: string) => {
 
-    console.log("tokentoken", token)
-
     try {
       const data = await axios.post(`${URL}logout`, {
         token
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       })
       if (data.data.status === 'success') {
         setAuth({
