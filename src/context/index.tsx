@@ -1,5 +1,6 @@
 import axios, {AxiosError} from 'axios';
-import React, {createContext, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const URL = 'http://localhost:8000/api/jupi/';
 
@@ -39,6 +40,29 @@ export const LoginProvider: React.FC<any> = ({children}) => {
 
   const [errors, setErrors] = useState<any>(undefined);
 
+  useEffect(() => {
+    getToken();
+  }, []);
+
+  const getToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem('appToken');
+      if (token) {
+        const data = await axios.get(`${URL}connected`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setAuth({
+          token,
+          user: data.data,
+        });
+      }
+    } catch (e: any) {
+      console.log('Eee', e.response.data);
+    }
+  };
+
   const login = async (args?: any) => {
     const {email, password} = args;
 
@@ -48,14 +72,13 @@ export const LoginProvider: React.FC<any> = ({children}) => {
         password,
       });
 
-      console.log('data', data);
-
       const {data: responseData} = data;
       if (responseData?.token) {
         setAuth({
           token: responseData?.token,
           user: responseData.user,
         });
+        await AsyncStorage.setItem('appToken', responseData?.token);
       }
     } catch (error: any) {
       if (error.response?.data?.errors) {
@@ -89,6 +112,7 @@ export const LoginProvider: React.FC<any> = ({children}) => {
           token: undefined,
           user: undefined,
         });
+        await AsyncStorage.removeItem('appToken');
       }
     } catch (error) {}
   };

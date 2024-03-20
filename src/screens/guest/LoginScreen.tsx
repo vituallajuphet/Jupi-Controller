@@ -92,7 +92,7 @@ const LoginScreen: React.FC<any> = props => {
           </View>
           <View style={styles.inputContainer}>
             <TextInput
-              placeholder="Username"
+              placeholder="Email"
               style={[styles.input, errorStyle]}
               onChangeText={text => {
                 setEmail(text);

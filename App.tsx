@@ -4,8 +4,9 @@ import {LoginProvider} from './src/context';
 import {DataProvider} from './src/context/dataContext';
 import {TailwindProvider} from 'tailwind-rn';
 import {utilities} from './tailwind.json';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const App = () => {
-  console.log('eeee');
   return (
     <LoginProvider>
       <DataProvider>
