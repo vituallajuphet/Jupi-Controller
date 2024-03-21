@@ -108,7 +108,9 @@ const LoginScreen: React.FC<any> = props => {
             />
             {context.errors ? (
               <View style={styles.errorContainer}>
-                <Text style={styles.errorTxt}>{context?.errors?.login}</Text>
+                <Text style={styles.errorTxt}>
+                  {context?.errors?.login || context?.errors?.email}
+                </Text>
               </View>
             ) : null}
           </View>
@@ -123,6 +125,11 @@ const LoginScreen: React.FC<any> = props => {
               placeholder="Password"
               style={styles.input}
             />
+            {context.errors ? (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorTxt}>{context?.errors?.password}</Text>
+              </View>
+            ) : null}
           </View>
           <TouchableOpacity
             style={styles.button}

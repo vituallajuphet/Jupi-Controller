@@ -90,6 +90,10 @@ export const LoginProvider: React.FC<any> = ({children}) => {
       }
     } catch (error: any) {
       if (error.response?.data?.errors) {
+        console.log(
+          'error.response?.data?.errors',
+          error.response?.data?.errors,
+        );
         setErrors(error?.response?.data?.errors);
         setLoading(false);
       }

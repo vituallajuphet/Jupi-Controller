@@ -1,6 +1,12 @@
 import React, {useContext, useEffect, useRef} from 'react';
 import {Text, View, VoiceCommand} from '../../components/controls';
-import {ImageBackground, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  ImageBackground,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import Homeheader from '../../components/controls/Homeheader';
@@ -8,10 +14,14 @@ import WeatherHome from '../../components/controls/Weather';
 import Sidebar from '../../components/controls/sidebar/Sidebar';
 import {GET_ROOMS} from '../../context/actions';
 import {LoginContext} from '../../context';
+import Rooms from './components/Rooms';
 
 const Home = () => {
   const nav = useNavigation();
   const context = useContext(LoginContext);
+
+  const [rooms, setRooms] = React.useState<any>([]);
+  const [refreshing, setRefreshing] = React.useState(false);
 
   const gotoTrainMachine = () => {
     nav.navigate('TrainScreen');
@@ -23,19 +33,28 @@ const Home = () => {
     nav.navigate('Settings');
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    setData();
+  };
+
   const open = () => {
     ref.current.handleOPen();
   };
 
-  const data = async () => {
-    const devices = await GET_ROOMS(context.auth.token);
-    return devices;
+  const setData = async () => {
+    try {
+      const devices = await GET_ROOMS(context.auth.token);
+      setRooms(devices);
+      setRefreshing(false);
+    } catch (error) {
+      console.log('errr', error);
+    }
   };
 
   useEffect(() => {
-    console.log('data', data());
-  }, [data()]);
-
+    setData();
+  }, []);
   return (
     <>
       <Sidebar ref={ref} />
@@ -45,16 +64,24 @@ const Home = () => {
           style={style.bg}
           source={require('../../images/bg.jpg')}
           resizeMode="cover">
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: 'transparent',
-              padding: 10,
-              paddingHorizontal: 20,
-            }}>
-            <Homeheader />
-            <WeatherHome />
-            <View style={style.boxContainer}>
+          <ScrollView
+            scrollEnabled
+            nestedScrollEnabled
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'transparent',
+                padding: 10,
+                paddingHorizontal: 20,
+              }}>
+              <Homeheader />
+              <WeatherHome />
+              <Rooms rooms={rooms} />
+
+              {/* <View style={style.boxContainer}>
               <TouchableOpacity
                 onPress={() => {
                   gotoTrainMachine();
@@ -83,9 +110,10 @@ const Home = () => {
                 <Icon name="gear" size={50} color={'#fff'} />
                 <Text style={style.text}>Settings</Text>
               </TouchableOpacity>
+            </View> */}
+              {/* <VoiceCommand /> */}
             </View>
-            {/* <VoiceCommand /> */}
-          </View>
+          </ScrollView>
         </ImageBackground>
       </View>
     </>

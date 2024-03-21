@@ -36,8 +36,34 @@ export const GET_ROOMS = async (token?: string) => {
       },
     });
 
+    return data.data?.rooms;
+  } catch (error: any) {
+    return error.response?.data;
+  }
+};
+
+export const TOGGLE_SWITCH = async (
+  token?: string,
+  payload?: {slug: string; status: 'on' | 'off'},
+) => {
+  try {
+    const data = await axios.put(
+      `${URL}device/switch`,
+      {
+        ...payload,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    console.log('data', data.data);
+
     return data.data;
   } catch (error: any) {
+    console.log('err', error.response?.data);
     return error.response?.data;
   }
 };

@@ -2,7 +2,13 @@ import React, {useContext, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import {LoginScreen, RegisterScreen, SplashScreen} from './guest';
-import {Settings, SmartHomeScreen, TrainScreen, Home} from './auth';
+import {
+  Settings,
+  SmartHomeScreen,
+  TrainScreen,
+  Home,
+  DevicesScreen,
+} from './auth';
 import TrainHeader from '../components/controls/TrainHeader';
 import {LoginContext} from '../context';
 import TestScreen from './auth/TestScreen';
@@ -39,6 +45,7 @@ const AppStack = () => {
             <Stack.Screen name="Settings" component={Settings} />
             <Stack.Screen name="SmartHomeScreen" component={SmartHomeScreen} />
             <Stack.Screen name="TestScreen" component={TestScreen} />
+            <Stack.Screen name="DevicesScreen" component={DevicesScreen} />
           </>
         ) : (
           <>
