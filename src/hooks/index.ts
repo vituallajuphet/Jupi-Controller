@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {Keyboard, KeyboardEvent} from 'react-native';
 
 const useKeyboardStatus = (): boolean => {
@@ -32,3 +32,32 @@ const useKeyboardStatus = (): boolean => {
 };
 
 export default useKeyboardStatus;
+
+export const useDevicesCounts = (rooms?: any[]) => {
+  const devices = useMemo(() => {
+    if (!rooms?.length) {
+      return 0;
+    }
+
+    return rooms.reduce(
+      (acc, room) => {
+        const active = room.devices.filter(
+          (device: any) => device.status === 'on',
+        ).length;
+        const inActive = room.devices.filter(
+          (device: any) => device.status === 'off',
+        ).length;
+        return {
+          active: acc.active + active,
+          inactive: acc.inactive + inActive,
+        };
+      },
+      {
+        active: 0,
+        inactive: 0,
+      },
+    );
+  }, [rooms]);
+
+  return {active: devices.active, inactive: devices.inactive};
+};

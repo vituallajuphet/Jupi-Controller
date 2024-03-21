@@ -55,8 +55,8 @@ const LoginScreen: React.FC<any> = props => {
 
         if (success) {
           context.login({
-            email: 'opet',
-            password: '1234',
+            email: 'test@test.com',
+            password: 'pass1234',
           });
         } else {
           console.log('user cancelled biometric prompt');

@@ -8,6 +8,7 @@ import {
   TrainScreen,
   Home,
   DevicesScreen,
+  AddRoomScreen,
 } from './auth';
 import TrainHeader from '../components/controls/TrainHeader';
 import {LoginContext} from '../context';
@@ -30,6 +31,7 @@ const AppStack = () => {
         {context.auth.user ? (
           <>
             <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="AddRoomScreen" component={AddRoomScreen} />
             <Stack.Screen
               options={{
                 headerShown: true,

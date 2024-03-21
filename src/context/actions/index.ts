@@ -1,5 +1,6 @@
 import axios, {AxiosError} from 'axios';
-import {URL} from '../../utils';
+import {URL, getToken} from '../../utils';
+export {ADD_ROOM} from './add_room';
 
 type userRegisterType = {
   name: string;
@@ -28,8 +29,9 @@ export const REGISTER_USER = async ({
   }
 };
 
-export const GET_ROOMS = async (token?: string) => {
+export const GET_ROOMS = async () => {
   try {
+    const token = await getToken();
     const data = await axios.get(`${URL}rooms`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -42,11 +44,12 @@ export const GET_ROOMS = async (token?: string) => {
   }
 };
 
-export const TOGGLE_SWITCH = async (
-  token?: string,
-  payload?: {slug: string; status: 'on' | 'off'},
-) => {
+export const TOGGLE_SWITCH = async (payload?: {
+  slug: string;
+  status: 'on' | 'off';
+}) => {
   try {
+    const token = await getToken();
     const data = await axios.put(
       `${URL}device/switch`,
       {
@@ -58,9 +61,6 @@ export const TOGGLE_SWITCH = async (
         },
       },
     );
-
-    console.log('data', data.data);
-
     return data.data;
   } catch (error: any) {
     console.log('err', error.response?.data);

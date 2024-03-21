@@ -1,10 +1,23 @@
-import {View, StyleSheet, TextInput, TextInputProps} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  TextStyle,
+} from 'react-native';
 import React from 'react';
 
 const Textfield = (props: TextInputProps) => {
+  const inputStyle: TextStyle = props.multiline
+    ? {
+        height: 100,
+        textAlignVertical: 'top',
+      }
+    : {};
+
   return (
     <View style={styles.container}>
-      <TextInput {...props} style={styles.textInput} />
+      <TextInput {...props} style={[styles.textInput, inputStyle]} />
     </View>
   );
 };

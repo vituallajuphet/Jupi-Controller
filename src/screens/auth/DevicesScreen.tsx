@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   Switch,
 } from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useMemo} from 'react';
 import Header from '../../components/controls/Header';
 import {useNavigation} from '@react-navigation/native';
 import {Image} from 'react-native';
 import {theme} from '../../utils/color';
 import {LoginContext} from '../../context';
-import {TOGGLE_SWITCH} from '../../context/actions';
+import {GET_ROOMS, TOGGLE_SWITCH} from '../../context/actions';
+import {StoreContext, StoreProvider} from '../../context/store';
 
 type deviceTypes = {
   room?: {
@@ -29,16 +30,37 @@ const DevicesScreen = (props: any) => {
   const nav = useNavigation();
   const params: deviceTypes = props.route.params;
   const context = useContext(LoginContext);
+  const store = useContext(StoreContext);
 
   const token = context.auth.token;
-
   const {room} = params;
 
-  const handleToggle = item => {
-    TOGGLE_SWITCH(token, {
+  const handleToggle = async item => {
+    await TOGGLE_SWITCH({
       slug: item.slug,
       status: item.status === 'on' ? 'off' : 'on',
-    });
+    })
+      .then(res => {
+        setData();
+      })
+      .catch(err => {
+        console.log('error', err);
+      });
+  };
+
+  const storeRooms = useMemo(() => {
+    return store.state?.rooms?.length
+      ? store.state?.rooms?.find(i => i.slug === room?.slug)
+      : [];
+  }, [store.state?.rooms]);
+
+  const setData = async () => {
+    try {
+      const devices = await GET_ROOMS();
+      store.dispatch({type: 'SET_ROOMS', payload: devices});
+    } catch (error) {
+      console.log('errr', error);
+    }
   };
 
   const renderItem = ({item}) => {
@@ -65,7 +87,7 @@ const DevicesScreen = (props: any) => {
           }}>
           <Text
             style={{
-              fontSize: 12,
+              fontSize: 14,
               color: '#797878',
             }}>
             {item?.status}
@@ -101,7 +123,7 @@ const DevicesScreen = (props: any) => {
             padding: 10,
           }}>
           <FlatList
-            data={room?.devices}
+            data={storeRooms.devices}
             renderItem={renderItem}
             numColumns={2}
             columnWrapperStyle={{gap: 10}}

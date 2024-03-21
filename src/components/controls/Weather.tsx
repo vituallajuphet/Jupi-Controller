@@ -1,54 +1,58 @@
-import { View, Text, StyleSheet } from 'react-native'
-import React, { FC, useContext } from 'react'
-import { st } from '../../utils'
-import Icon from 'react-native-vector-icons/Feather'
-import { Button } from '.'
-import { LoginContext } from '../../context'
-import axios from 'axios'
+import {View, Text, StyleSheet} from 'react-native';
+import React, {FC, useContext} from 'react';
+import {st} from '../../utils';
+import Icon from 'react-native-vector-icons/Feather';
+import {Button} from '.';
+import {LoginContext} from '../../context';
+import axios from 'axios';
+import {useDevicesCounts} from '../../hooks';
+import {StoreContext} from '../../context/store';
 
-
-const WeatherHome: FC<any> = (props) => {
-
-  const context = useContext(LoginContext)
-
+const WeatherHome: FC<any> = props => {
+  const store = useContext(StoreContext);
+  const context = useContext(LoginContext);
+  const {active, inactive} = useDevicesCounts(store.state?.rooms);
   return (
     <View style={styles.container}>
       <View>
         <View style={[st('gap-y-10')]}>
           <View style={[st('f-row itiems-center j-between'), styles.row]}>
             <View style={[st('f-row tems-center gap-x-3')]}>
-              <Icon name='zap' size={25} />
+              <Icon name="zap" size={25} />
               <Text style={styles.text}>Active Devices</Text>
             </View>
-            <Text style={[styles.text, styles.textVal]}>3</Text>
+            <Text style={[styles.text, styles.textVal]}>{active}</Text>
           </View>
           <View style={[st('f-row items-center j-between')]}>
             <View style={[st('f-row items-center gap-x-3')]}>
-              <Icon name='zap-off' size={25} />
+              <Icon name="zap-off" size={25} />
               <Text style={styles.text}>Inactive</Text>
             </View>
-            <Text style={[styles.text, styles.textVal]}>1</Text>
+            <Text style={[styles.text, styles.textVal]}>{inactive}</Text>
           </View>
         </View>
       </View>
-      <Button style={{ marginTop: 20 }}
-
+      <Button
+        style={{marginTop: 20}}
         onPress={() => {
-          axios.get('http://localhost:8000/api/jupi/getdata/', {
-            headers: {
-              Authorization: `Bearer ${context.auth.token}`
-            }
-          }).then(res => {
-            console.log("ress", res.data)
-          }).catch(err => {
-            console.warn("err", err)
-
-          })
-        }}
-      >TURN OFF ALL DEVICES</Button>
+          axios
+            .get('http://localhost:8000/api/jupi/getdata/', {
+              headers: {
+                Authorization: `Bearer ${context.auth.token}`,
+              },
+            })
+            .then(res => {
+              console.log('ress', res.data);
+            })
+            .catch(err => {
+              console.warn('err', err);
+            });
+        }}>
+        TURN OFF ALL DEVICES
+      </Button>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -57,23 +61,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 5,
     marginBottom: 15,
-    marginTop: 15
+    marginTop: 15,
   },
   row: {
     borderBottomWidth: 1,
     borderColor: '#34246b',
-    paddingBottom: 10
+    paddingBottom: 10,
   },
   text: {
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   textVal: {
     fontSize: 23,
-    color: '#add3ff'
-  }
-})
+    color: '#add3ff',
+  },
+});
 
-
-
-export default WeatherHome
+export default WeatherHome;

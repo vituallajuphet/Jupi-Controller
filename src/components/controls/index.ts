@@ -4,3 +4,4 @@ export {default as MessageWriter} from './MessageWriter';
 export {default as VoiceCommand} from './VoiceCommand';
 export {default as Textfield} from './Textfield';
 export {default as Button} from './Button';
+export {default as Confirmation} from './Confirmation';

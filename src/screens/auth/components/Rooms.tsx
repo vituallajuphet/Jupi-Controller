@@ -8,7 +8,7 @@ import {
   useColorScheme,
   Image,
 } from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {theme} from '../../../utils/color';
 import {useNavigation} from '@react-navigation/native';
 
@@ -59,6 +59,9 @@ const Rooms: React.FC<RoomProps> = ({rooms, onToggleChange}) => {
         }}>
         <Text style={styles.name}>Your Rooms</Text>
         <TouchableOpacity
+          onPress={() => {
+            nav.navigate('AddRoomScreen');
+          }}
           style={[styles.addBtn, {backgroundColor: color.primary}]}>
           <Text style={styles.btnTxt}>Add</Text>
         </TouchableOpacity>

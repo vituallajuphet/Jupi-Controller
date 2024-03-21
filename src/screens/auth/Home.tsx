@@ -15,12 +15,13 @@ import Sidebar from '../../components/controls/sidebar/Sidebar';
 import {GET_ROOMS} from '../../context/actions';
 import {LoginContext} from '../../context';
 import Rooms from './components/Rooms';
+import {StoreContext} from '../../context/store';
 
 const Home = () => {
   const nav = useNavigation();
   const context = useContext(LoginContext);
+  const store = useContext(StoreContext);
 
-  const [rooms, setRooms] = React.useState<any>([]);
   const [refreshing, setRefreshing] = React.useState(false);
 
   const gotoTrainMachine = () => {
@@ -44,8 +45,8 @@ const Home = () => {
 
   const setData = async () => {
     try {
-      const devices = await GET_ROOMS(context.auth.token);
-      setRooms(devices);
+      const devices = await GET_ROOMS();
+      store.dispatch({type: 'SET_ROOMS', payload: devices});
       setRefreshing(false);
     } catch (error) {
       console.log('errr', error);
@@ -79,7 +80,7 @@ const Home = () => {
               }}>
               <Homeheader />
               <WeatherHome />
-              <Rooms rooms={rooms} />
+              <Rooms rooms={store.state?.rooms} />
 
               {/* <View style={style.boxContainer}>
               <TouchableOpacity
