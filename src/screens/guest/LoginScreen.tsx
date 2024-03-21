@@ -76,6 +76,13 @@ const LoginScreen: React.FC<any> = props => {
 
   const errorStyle = context.errors ? styles.inputError : null;
 
+  if (context.loading)
+    return (
+      <View style={styles.container}>
+        <Text>Loading...</Text>
+      </View>
+    );
+
   return (
     <View style={styles.container}>
       <ImageBackground

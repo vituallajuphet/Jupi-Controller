@@ -1,41 +1,40 @@
-import React, { useEffect, useRef } from 'react';
-import { Text, View, VoiceCommand } from '../../components/controls';
-import { ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, {useContext, useEffect, useRef} from 'react';
+import {Text, View, VoiceCommand} from '../../components/controls';
+import {ImageBackground, StyleSheet, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import Homeheader from '../../components/controls/Homeheader';
 import WeatherHome from '../../components/controls/Weather';
 import Sidebar from '../../components/controls/sidebar/Sidebar';
-import axios from 'axios';
+import {GET_ROOMS} from '../../context/actions';
+import {LoginContext} from '../../context';
 
 const Home = () => {
   const nav = useNavigation();
-
-
-  useEffect(() => {
-    console.log("reeee")
-    axios.get('http://localhost:8000/api/testing/').then(res => {
-      console.log("ress", res.data)
-    }).catch(err => {
-      console.warn("err", err)
-    })
-  }, [])
-
-
+  const context = useContext(LoginContext);
 
   const gotoTrainMachine = () => {
     nav.navigate('TrainScreen');
   };
 
-  const ref = useRef<any>()
+  const ref = useRef<any>();
 
   const gotoController = () => {
     nav.navigate('Settings');
   };
 
   const open = () => {
-    ref.current.handleOPen()
-  }
+    ref.current.handleOPen();
+  };
+
+  const data = async () => {
+    const devices = await GET_ROOMS(context.auth.token);
+    return devices;
+  };
+
+  useEffect(() => {
+    console.log('data', data());
+  }, [data()]);
 
   return (
     <>
@@ -46,12 +45,13 @@ const Home = () => {
           style={style.bg}
           source={require('../../images/bg.jpg')}
           resizeMode="cover">
-          <View style={{
-            flex: 1,
-            backgroundColor: 'transparent',
-            padding: 10,
-            paddingHorizontal: 20
-          }}>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: 'transparent',
+              padding: 10,
+              paddingHorizontal: 20,
+            }}>
             <Homeheader />
             <WeatherHome />
             <View style={style.boxContainer}>
@@ -86,8 +86,8 @@ const Home = () => {
             </View>
             {/* <VoiceCommand /> */}
           </View>
-        </ImageBackground >
-      </View >
+        </ImageBackground>
+      </View>
     </>
   );
 };
@@ -118,13 +118,11 @@ const style = StyleSheet.create({
     backgroundColor: 'transparent',
     gap: 10,
 
-    flex: 5
+    flex: 5,
   },
   bg: {
     width: '100%',
     flex: 1,
-
-
   },
 });
 

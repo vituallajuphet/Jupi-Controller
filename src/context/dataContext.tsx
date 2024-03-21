@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, {createContext, useReducer, useState} from 'react';
 
 const data = [
   {
@@ -26,6 +26,7 @@ type dataType = {
 
 interface dataContext extends dataType {
   settings: dataType;
+  devices?: Array<any>;
 }
 
 export const DataContext = createContext<dataContext>({
@@ -35,14 +36,14 @@ export const DataContext = createContext<dataContext>({
   },
 });
 
-export const DataProvider: React.FC<any> = ({ children }) => {
+export const DataProvider: React.FC<any> = ({children}) => {
   const [settings, setSettings] = useState<dataType>({
     server: 'http://192.168.1.199/',
     switches: data,
   });
 
   return (
-    <DataContext.Provider value={{ settings, setSettings }}>
+    <DataContext.Provider value={{settings, setSettings}}>
       {children}
     </DataContext.Provider>
   );

@@ -1,5 +1,5 @@
 import axios, {AxiosError} from 'axios';
-const URL = 'http://localhost:8000/api/jupi/';
+import {URL} from '../../utils';
 
 type userRegisterType = {
   name: string;
@@ -20,6 +20,20 @@ export const REGISTER_USER = async ({
       name,
       password,
       password_confirmation,
+    });
+
+    return data.data;
+  } catch (error: any) {
+    return error.response?.data;
+  }
+};
+
+export const GET_ROOMS = async (token?: string) => {
+  try {
+    const data = await axios.get(`${URL}rooms`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     return data.data;

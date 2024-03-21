@@ -1,8 +1,7 @@
 import axios, {AxiosError} from 'axios';
 import React, {createContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const URL = 'http://localhost:8000/api/jupi/';
+import {URL} from '../utils';
 
 type authType = {
   token?: string;
@@ -19,12 +18,14 @@ interface LoginContextProps extends authType {
   register: (e?: any) => void;
   auth: authType;
   errors?: any;
+  loading: boolean;
 }
 
 export const LoginContext = createContext<LoginContextProps>({
   login: (e?: any) => {},
   logout: (e?: string) => {},
   register: (e?: any) => {},
+  loading: false,
   auth: {
     token: undefined,
     user: undefined,
@@ -37,6 +38,7 @@ export const LoginProvider: React.FC<any> = ({children}) => {
     token: undefined,
     user: undefined,
   });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const [errors, setErrors] = useState<any>(undefined);
 
@@ -45,6 +47,7 @@ export const LoginProvider: React.FC<any> = ({children}) => {
   }, []);
 
   const getToken = async () => {
+    setLoading(true);
     try {
       const token = await AsyncStorage.getItem('appToken');
       if (token) {
@@ -53,19 +56,23 @@ export const LoginProvider: React.FC<any> = ({children}) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setAuth({
-          token,
-          user: data.data,
-        });
+        if (data?.data?.user) {
+          setAuth({
+            token,
+            user: data.data.user,
+          });
+        }
       }
+      setLoading(false);
     } catch (e: any) {
       console.log('Eee', e.response.data);
+      setLoading(false);
     }
   };
 
   const login = async (args?: any) => {
     const {email, password} = args;
-
+    setLoading(true);
     try {
       const data = await axios.post(`${URL}login`, {
         email,
@@ -79,10 +86,12 @@ export const LoginProvider: React.FC<any> = ({children}) => {
           user: responseData.user,
         });
         await AsyncStorage.setItem('appToken', responseData?.token);
+        setLoading(false);
       }
     } catch (error: any) {
       if (error.response?.data?.errors) {
         setErrors(error?.response?.data?.errors);
+        setLoading(false);
       }
     }
   };
@@ -95,6 +104,7 @@ export const LoginProvider: React.FC<any> = ({children}) => {
   };
 
   const logout = async (token: string) => {
+    setLoading(true);
     try {
       const data = await axios.post(
         `${URL}logout`,
@@ -113,12 +123,16 @@ export const LoginProvider: React.FC<any> = ({children}) => {
           user: undefined,
         });
         await AsyncStorage.removeItem('appToken');
+        setLoading(false);
       }
-    } catch (error) {}
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   return (
-    <LoginContext.Provider value={{auth, login, logout, register, errors}}>
+    <LoginContext.Provider
+      value={{auth, login, logout, register, errors, loading}}>
       {children}
     </LoginContext.Provider>
   );
