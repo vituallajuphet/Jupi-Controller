@@ -27,7 +27,7 @@ const AddRoomScreen = (props: any) => {
   const [formData, setFormData] = React.useState<any>({
     room_name: '',
     descriptions: '',
-    image: undefined,
+    image: '',
   });
 
   const handleChange = ({id, text}: {id: string; text: string}) => {
@@ -37,9 +37,9 @@ const AddRoomScreen = (props: any) => {
   const handleSave = async () => {
     try {
       const data = await ADD_ROOM(formData);
-      if (data.status === 'success') {
-        store.dispatch({type: 'ADD_ROOM', payload: data.room});
-      }
+      //   if (data.status === 'success') {
+      //     store.dispatch({type: 'ADD_ROOM', payload: data.room});
+      //   }
     } catch (error) {
       console.log('errr', error);
     }
@@ -51,6 +51,7 @@ const AddRoomScreen = (props: any) => {
       height: 200,
       cropping: true,
     }).then(image => {
+      console.log('image', image);
       setFormData({...formData, image});
     });
   };

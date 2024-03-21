@@ -11,12 +11,14 @@ import {
 import React, {useContext} from 'react';
 import {theme} from '../../../utils/color';
 import {useNavigation} from '@react-navigation/native';
+const BASE_URL = 'http://localhost:8000/';
 
 type roomType = {
   room_name?: string;
   descriptions?: string;
   slug: string;
   id: number;
+  image_path?: string;
 };
 
 type RoomProps = {
@@ -29,6 +31,9 @@ const Rooms: React.FC<RoomProps> = ({rooms, onToggleChange}) => {
   const nav = useNavigation();
 
   const renderComponent = ({item}: {item: roomType}) => {
+    const uri = item?.image_path
+      ? `${BASE_URL}${item?.image_path}`
+      : 'https://dummyimage.com/100x100/000/fff';
     return (
       <TouchableOpacity
         style={styles.item}
@@ -36,7 +41,7 @@ const Rooms: React.FC<RoomProps> = ({rooms, onToggleChange}) => {
           nav.navigate('DevicesScreen', {room: item});
         }}>
         <Image
-          source={{uri: 'https://dummyimage.com/100x100/000/fff'}}
+          source={{uri: uri}}
           style={{width: 60, height: 60, borderRadius: 50}}
         />
         <Text style={styles.itemText}>{item?.room_name}</Text>
