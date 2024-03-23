@@ -4,7 +4,9 @@ import {
   TouchableOpacityProps,
   Text,
   StyleSheet,
+  useColorScheme,
 } from 'react-native';
+import {theme} from '../../utils/color';
 
 interface ButtonProps extends TouchableOpacityProps {
   // Add any additional props or customizations here
@@ -12,8 +14,14 @@ interface ButtonProps extends TouchableOpacityProps {
 
 const Button = forwardRef<TouchableOpacity, ButtonProps>((props, ref) => {
   const {children, ...rest} = props;
+  const scheme = useColorScheme();
+  const color = theme.color[scheme === 'dark' ? 'dark' : 'light'];
+
   return (
-    <TouchableOpacity {...rest} style={[rest.style, styles.button]} ref={ref}>
+    <TouchableOpacity
+      {...rest}
+      style={[rest.style, styles.button, {backgroundColor: color.primary}]}
+      ref={ref}>
       <Text style={styles.btxt}>{children}</Text>
     </TouchableOpacity>
   );
@@ -21,7 +29,6 @@ const Button = forwardRef<TouchableOpacity, ButtonProps>((props, ref) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#37017e',
     padding: 14,
     paddingHorizontal: 10,
     flexDirection: 'row',

@@ -10,6 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {LoginContext} from '../../context';
 import {REGISTER_USER} from '../../context/actions';
+import {withLoading} from '../../hoc';
 
 const RegisterScreen: React.FC<any> = props => {
   const context = useContext(LoginContext);
@@ -211,4 +212,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default RegisterScreen;
+export default withLoading(RegisterScreen);

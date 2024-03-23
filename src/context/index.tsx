@@ -19,6 +19,7 @@ interface LoginContextProps extends authType {
   auth: authType;
   errors?: any;
   loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const LoginContext = createContext<LoginContextProps>({
@@ -31,6 +32,7 @@ export const LoginContext = createContext<LoginContextProps>({
     user: undefined,
   },
   errors: undefined,
+  setLoading: () => {},
 });
 
 export const LoginProvider: React.FC<any> = ({children}) => {
@@ -136,7 +138,7 @@ export const LoginProvider: React.FC<any> = ({children}) => {
 
   return (
     <LoginContext.Provider
-      value={{auth, login, logout, register, errors, loading}}>
+      value={{auth, login, logout, register, errors, loading, setLoading}}>
       {children}
     </LoginContext.Provider>
   );

@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
-import {Text, View} from '../../components/controls';
+import {Loading, Text, View} from '../../components/controls';
 import {
   ImageBackground,
   StyleSheet,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {LoginContext} from '../../context';
+import {withLoading} from '../../hoc';
 
 const rnBiometrics = new ReactNativeBiometrics({allowDeviceCredentials: true});
 
@@ -75,13 +76,6 @@ const LoginScreen: React.FC<any> = props => {
   };
 
   const errorStyle = context.errors ? styles.inputError : null;
-
-  if (context.loading)
-    return (
-      <View style={styles.container}>
-        <Text>Loading...</Text>
-      </View>
-    );
 
   return (
     <View style={styles.container}>
@@ -273,4 +267,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default withLoading(LoginScreen);

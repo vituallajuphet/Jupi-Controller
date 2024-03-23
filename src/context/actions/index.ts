@@ -1,6 +1,6 @@
 import axios, {AxiosError} from 'axios';
 import {URL, getToken} from '../../utils';
-export {ADD_ROOM} from './add_room';
+export {ADD_ROOM, ADD_DEVICE} from './add_room';
 
 type userRegisterType = {
   name: string;

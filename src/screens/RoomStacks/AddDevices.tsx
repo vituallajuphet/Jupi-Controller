@@ -16,27 +16,57 @@ import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
   Button,
   Confirmation,
+  Dropdown,
   Loading,
   Textfield,
 } from '../../components/controls';
-import {ADD_ROOM} from '../../context/actions';
+import {ADD_DEVICE} from '../../context/actions';
 import {StoreContext} from '../../context/store';
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/Feather';
 import {LoginContext} from '../../context';
 import {withLoading} from '../../hoc';
 
-const AddRoomScreen = (props: any) => {
+const options = [
+  {
+    id: 1,
+    name: 'Option 1',
+  },
+  {
+    id: 2,
+    name: 'Option 2',
+  },
+  {
+    id: 3,
+    name: 'Option 3',
+  },
+];
+
+type formType = {
+  device_name: string;
+  switch_number: string;
+  device_type: string;
+  device_image_path: any;
+  status: 'on' | 'off';
+  room_id: string;
+};
+
+const AddDevices = (props: any) => {
   const nav = useNavigation();
   const store = useContext(StoreContext);
   const appContext = useContext(LoginContext);
   const {setLoading, loading} = appContext;
   const [open, setOpen] = React.useState(false);
 
-  const [formData, setFormData] = React.useState<any>({
-    room_name: '',
-    descriptions: '',
-    image: '',
+  const room = props.route.params.room;
+
+  const [formData, setFormData] = React.useState<formType>({
+    device_name: '',
+    switch_number: '',
+    device_type: '',
+    device_image_path: '',
+    status: 'off',
+    room_id: room.slug,
   });
 
   const handleChange = ({id, text}: {id: string; text: string}) => {
@@ -45,18 +75,23 @@ const AddRoomScreen = (props: any) => {
 
   const _reset = () => {
     setFormData({
-      room_name: '',
-      descriptions: '',
-      image: '',
+      device_name: '',
+      switch_number: '',
+      device_type: '',
+      device_image_path: '',
+      status: 'off',
+      room_id: room.slug,
     });
   };
 
   const handleSave = async () => {
     setLoading(true);
     try {
-      const data = await ADD_ROOM(formData);
+      const data = await ADD_DEVICE(formData);
+
+      console.log('data device', data);
       if (data.status === 'success') {
-        store.dispatch({type: 'ADD_ROOM', payload: data.room});
+        // store.dispatch({type: 'ADD_ROOM', payload: data.room});
         setOpen(false);
         _reset();
         setLoading(false);
@@ -73,8 +108,7 @@ const AddRoomScreen = (props: any) => {
       height: 200,
       cropping: true,
     }).then(image => {
-      console.log('image', image);
-      setFormData({...formData, image});
+      setFormData({...formData, device_image_path: image});
     });
   };
 
@@ -86,7 +120,7 @@ const AddRoomScreen = (props: any) => {
         height={220}
         open={open}
         btnText="Confirm"
-        text="You`re about to add a new room, are you sure to continue?"
+        text="You`re about to add a new device, are you sure to continue?"
         title="Confirmation"
         onClose={() => {
           setOpen(false);
@@ -100,7 +134,7 @@ const AddRoomScreen = (props: any) => {
         source={require('../../images/bg.jpg')}
         resizeMode="cover">
         <Header
-          title="Add Room"
+          title="Add Device"
           onBack={() => {
             nav.goBack();
           }}
@@ -108,14 +142,14 @@ const AddRoomScreen = (props: any) => {
         <KeyboardAwareScrollView style={{flex: 1}}>
           <View style={styles.content}>
             <View style={[styles.textContainer]}>
-              <Text style={styles.text}>Upload Room Picture</Text>
+              <Text style={styles.text}>Device Image</Text>
               {/* <Button
-                onPress={() => {
-                  handleGetImage();
-                }}>
-                Upload
-              </Button> */}
-              {formData.image ? (
+                  onPress={() => {
+                    handleGetImage();
+                  }}>
+                  Upload
+                </Button> */}
+              {formData.device_image_path ? (
                 <TouchableOpacity
                   onPress={() => {
                     handleGetImage();
@@ -127,7 +161,7 @@ const AddRoomScreen = (props: any) => {
                   }}>
                   <Image
                     source={{
-                      uri: formData.image.path,
+                      uri: formData.device_image_path.path,
                     }}
                     resizeMode="cover"
                     style={{width: '100%', height: '100%'}}
@@ -154,37 +188,76 @@ const AddRoomScreen = (props: any) => {
               )}
             </View>
             <View style={[styles.textContainer]}>
-              <Text style={styles.text}>Room Name</Text>
+              <Text style={styles.text}>Device Name</Text>
               <Textfield
-                value={formData.room_name}
+                value={formData.device_name}
                 onChangeText={text => {
                   handleChange({
-                    id: 'room_name',
+                    id: 'device_name',
                     text,
                   });
                 }}
               />
             </View>
             <View style={[styles.textContainer]}>
-              <Text style={styles.text}>Description</Text>
+              <Text style={styles.text}>Switch Number</Text>
               <Textfield
-                multiline
-                value={formData.descriptions}
+                keyboardType="numeric"
+                value={formData.switch_number}
                 onChangeText={text => {
                   handleChange({
-                    id: 'descriptions',
+                    id: 'switch_number',
                     text,
                   });
                 }}
               />
             </View>
-
+            <View style={[styles.textContainer]}>
+              <Text style={styles.text}>Device Type</Text>
+              <Dropdown
+                options={options}
+                placeholder="Select Device Type"
+                keyboardType="default"
+                value={formData.device_type}
+                onChangeText={text => {
+                  handleChange({
+                    id: 'device_type',
+                    text,
+                  });
+                }}
+              />
+            </View>
+            <View style={[styles.textContainer]}>
+              <Text style={styles.text}>Status</Text>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: '#fff',
+                  padding: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  borderRadius: 10,
+                }}>
+                <Text style={styles.text3}>{formData.status}</Text>
+                <Switch
+                  value={formData.status === 'on'}
+                  thumbColor={'#fff'}
+                  onChange={() => {
+                    setFormData({
+                      ...formData,
+                      status: formData.status === 'on' ? 'off' : 'on',
+                    });
+                  }}
+                />
+              </View>
+            </View>
             <TouchableOpacity
               style={styles.button}
               onPress={() => {
                 setOpen(true);
               }}>
-              <Text style={styles.btnText}>Save Room</Text>
+              <Text style={styles.btnText}>Save Device</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAwareScrollView>
@@ -221,6 +294,9 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: 'transparent',
   },
+  text3: {
+    fontSize: 17,
+  },
   text: {
     fontSize: 17,
     marginBottom: 10,
@@ -247,4 +323,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withLoading(AddRoomScreen);
+export default withLoading(AddDevices);

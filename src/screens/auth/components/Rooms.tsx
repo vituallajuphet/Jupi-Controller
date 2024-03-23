@@ -11,7 +11,7 @@ import {
 import React, {useContext} from 'react';
 import {theme} from '../../../utils/color';
 import {useNavigation} from '@react-navigation/native';
-const BASE_URL = 'http://localhost:8000/';
+import {BASE_URL} from '../../../utils';
 
 type roomType = {
   room_name?: string;
@@ -38,14 +38,17 @@ const Rooms: React.FC<RoomProps> = ({rooms, onToggleChange}) => {
       <TouchableOpacity
         style={styles.item}
         onPress={() => {
-          nav.navigate('DevicesScreen', {room: item});
+          nav.navigate('RoomStack', {
+            screen: 'DevicesScreen',
+            params: {room: item},
+          });
         }}>
         <Image
           source={{uri: uri}}
           style={{width: 60, height: 60, borderRadius: 50}}
         />
         <Text style={styles.itemText}>{item?.room_name}</Text>
-        <Text>{item?.devices?.length} Devices</Text>
+        <Text>{item?.devices?.length ? item?.devices?.length : 0} Devices</Text>
       </TouchableOpacity>
     );
   };
@@ -87,7 +90,7 @@ const Rooms: React.FC<RoomProps> = ({rooms, onToggleChange}) => {
 
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: '#2323236a',
+    backgroundColor: '#5050507f',
     padding: 20,
     width: '48%',
     borderRadius: 10,

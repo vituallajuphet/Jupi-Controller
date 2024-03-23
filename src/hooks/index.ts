@@ -38,15 +38,16 @@ export const useDevicesCounts = (rooms?: any[]) => {
     if (!rooms?.length) {
       return 0;
     }
-
     return rooms.reduce(
       (acc, room) => {
-        const active = room.devices.filter(
-          (device: any) => device.status === 'on',
-        ).length;
-        const inActive = room.devices.filter(
-          (device: any) => device.status === 'off',
-        ).length;
+        const active = room?.devices?.length
+          ? room?.devices?.filter((device: any) => device.status === 'on')
+              .length
+          : 0;
+        const inActive = room?.devices?.length
+          ? room?.devices?.filter((device: any) => device.status === 'off')
+              .length
+          : 0;
         return {
           active: acc.active + active,
           inactive: acc.inactive + inActive,

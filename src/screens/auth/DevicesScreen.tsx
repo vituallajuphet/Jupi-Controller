@@ -15,6 +15,7 @@ import {theme} from '../../utils/color';
 import {LoginContext} from '../../context';
 import {GET_ROOMS, TOGGLE_SWITCH} from '../../context/actions';
 import {StoreContext, StoreProvider} from '../../context/store';
+import EmptyList from './components/EmptyList';
 
 type deviceTypes = {
   room?: {
@@ -122,18 +123,19 @@ const DevicesScreen = (props: any) => {
             flex: 1,
             padding: 10,
           }}>
-          <FlatList
-            data={storeRooms.devices}
-            renderItem={renderItem}
-            numColumns={2}
-            columnWrapperStyle={{gap: 10}}
-            contentContainerStyle={{
-              gap: 10,
-            }}
-            ListEmptyComponent={() => {
-              return <Text>eempty</Text>;
-            }}
-          />
+          {storeRooms?.devices?.length ? (
+            <FlatList
+              data={storeRooms.devices}
+              renderItem={renderItem}
+              numColumns={2}
+              columnWrapperStyle={{gap: 10}}
+              contentContainerStyle={{
+                gap: 10,
+              }}
+            />
+          ) : (
+            <EmptyList room={room} />
+          )}
         </View>
       </ImageBackground>
     </View>
