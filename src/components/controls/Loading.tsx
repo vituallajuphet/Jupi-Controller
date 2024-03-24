@@ -1,4 +1,4 @@
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Image, Modal} from 'react-native';
 import React from 'react';
 import Animated, {
   Easing,
@@ -23,14 +23,16 @@ const Loading = () => {
   }));
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.image, animatedStyle]}>
-        <Image
-          style={[styles.image]}
-          source={require('../../../assets/images/logo.jpg')}
-        />
-      </Animated.View>
-    </View>
+    <Modal visible>
+      <View style={styles.container}>
+        <Animated.View style={[styles.image, animatedStyle]}>
+          <Image
+            style={[styles.image]}
+            source={require('../../../assets/images/logo.jpg')}
+          />
+        </Animated.View>
+      </View>
+    </Modal>
   );
 };
 

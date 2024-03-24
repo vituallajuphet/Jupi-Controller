@@ -11,31 +11,41 @@ import React from 'react';
 import {Text, Textfield} from '.';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-type DropdownProps = TextInputProps & {
-  options: any[];
+export type optionType =
+  | {
+      id: string;
+      name: string;
+    }
+  | undefined;
+
+type DropdownProps = Omit<TextInputProps, 'onChange'> & {
+  options: optionType[];
   placeholder?: string;
-  onChange?: (value: any) => void;
+  onChange?: (value: optionType) => void;
+  selected?: optionType | undefined;
 };
 
 const Dropdown = (props: DropdownProps) => {
-  const {placeholder, options} = props;
+  const {placeholder, options, onChange, selected} = props;
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState<any>(undefined);
   const [search, setSearch] = React.useState('');
 
-  const rnderItem = ({item}) => {
+  const rnderItem = ({item}: {item: optionType}) => {
     return (
       <Pressable
+        key={item?.id}
         style={{paddingVertical: 12}}
         onPress={() => {
-          setSelected(item);
+          if (onChange) {
+            onChange(item);
+          }
           setOpen(false);
         }}>
         <Text
           style={{
             fontSize: 18,
           }}>
-          {item.name}
+          {item?.name}
         </Text>
       </Pressable>
     );

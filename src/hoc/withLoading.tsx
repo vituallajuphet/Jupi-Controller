@@ -6,10 +6,12 @@ function withLoading(Component: ComponentType<any>) {
   return function WithLoadingComponent({isLoading, ...props}: any) {
     const context = useContext(LoginContext);
 
-    if (!context.loading) {
-      return <Component {...props} />;
-    }
-    return <Loading />;
+    return (
+      <>
+        {context.loading ? <Loading /> : null}
+        <Component {...props} />
+      </>
+    );
   };
 }
 

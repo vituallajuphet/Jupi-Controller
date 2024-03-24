@@ -2,6 +2,7 @@ import axios from 'axios';
 import {URL, getToken} from '../../utils';
 import {Platform} from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
+import {optionType} from '../../components/controls/Dropdown';
 
 type addRoomType = {
   room_name: string;
@@ -12,7 +13,7 @@ type addRoomType = {
 type DeviceType = {
   device_name: string;
   switch_number: string;
-  device_type: string;
+  device_type: optionType;
   device_image_path?: any;
   status: 'off' | 'on';
   room_id: string;
@@ -53,7 +54,8 @@ export const ADD_DEVICE = async (payload?: DeviceType) => {
     formdata.append('device_name', payload?.device_name);
     formdata.append('switch_number', payload?.switch_number);
     formdata.append('status', payload?.status);
-    formdata.append('device_type', payload?.device_type);
+    formdata.append('device_type', payload?.device_type?.name);
+    formdata.append('room_id', payload?.room_id);
 
     if (payload?.device_image_path) {
       formdata.append(
@@ -73,7 +75,7 @@ export const ADD_DEVICE = async (payload?: DeviceType) => {
     return data.data;
   } catch (error: any) {
     console.log('err', error.response?.data);
-    return error.response?.data;
+    throw error.response?.data;
   }
 };
 

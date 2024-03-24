@@ -8,7 +8,7 @@ import {
   Switch,
   Image,
 } from 'react-native';
-import React, {useContext, useMemo} from 'react';
+import React, {useContext, useEffect, useMemo} from 'react';
 
 import {useNavigation} from '@react-navigation/native';
 import Header from '../../components/controls/Header';
@@ -26,30 +26,28 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/Feather';
 import {LoginContext} from '../../context';
 import {withLoading} from '../../hoc';
+import {optionType} from '../../components/controls/Dropdown';
+import {deviceErrorType, formType} from './types';
 
-const options = [
+const options: optionType[] = [
   {
-    id: 1,
-    name: 'Option 1',
+    id: 'electronics',
+    name: 'Electronics',
   },
   {
-    id: 2,
-    name: 'Option 2',
+    id: 'gadgets',
+    name: 'Gadgets',
   },
   {
-    id: 3,
-    name: 'Option 3',
+    id: 'appliances',
+    name: 'Appliances',
+  },
+
+  {
+    id: 'others',
+    name: 'Others',
   },
 ];
-
-type formType = {
-  device_name: string;
-  switch_number: string;
-  device_type: string;
-  device_image_path: any;
-  status: 'on' | 'off';
-  room_id: string;
-};
 
 const AddDevices = (props: any) => {
   const nav = useNavigation();
@@ -57,13 +55,14 @@ const AddDevices = (props: any) => {
   const appContext = useContext(LoginContext);
   const {setLoading, loading} = appContext;
   const [open, setOpen] = React.useState(false);
+  const [errors, setError] = React.useState<deviceErrorType<string[]>>();
 
   const room = props.route.params.room;
 
   const [formData, setFormData] = React.useState<formType>({
     device_name: '',
     switch_number: '',
-    device_type: '',
+    device_type: undefined,
     device_image_path: '',
     status: 'off',
     room_id: room.slug,
@@ -73,11 +72,15 @@ const AddDevices = (props: any) => {
     setFormData({...formData, [id]: text});
   };
 
+  const handleChangeDropdown = (val: optionType) => {
+    setFormData({...formData, device_type: val});
+  };
+
   const _reset = () => {
     setFormData({
       device_name: '',
       switch_number: '',
-      device_type: '',
+      device_type: undefined,
       device_image_path: '',
       status: 'off',
       room_id: room.slug,
@@ -89,15 +92,17 @@ const AddDevices = (props: any) => {
     try {
       const data = await ADD_DEVICE(formData);
 
-      console.log('data device', data);
       if (data.status === 'success') {
         // store.dispatch({type: 'ADD_ROOM', payload: data.room});
         setOpen(false);
         _reset();
         setLoading(false);
       }
-    } catch (error) {
-      console.log('errr', error);
+    } catch (error: any) {
+      setOpen(false);
+      if (error.errors) {
+        setError(error.errors);
+      }
       setLoading(false);
     }
   };
@@ -190,6 +195,9 @@ const AddDevices = (props: any) => {
             <View style={[styles.textContainer]}>
               <Text style={styles.text}>Device Name</Text>
               <Textfield
+                errorMessage={
+                  errors?.device_name ? errors?.device_name[0] : undefined
+                }
                 value={formData.device_name}
                 onChangeText={text => {
                   handleChange({
@@ -204,6 +212,9 @@ const AddDevices = (props: any) => {
               <Textfield
                 keyboardType="numeric"
                 value={formData.switch_number}
+                errorMessage={
+                  errors?.switch_number ? errors?.switch_number[0] : undefined
+                }
                 onChangeText={text => {
                   handleChange({
                     id: 'switch_number',
@@ -218,12 +229,9 @@ const AddDevices = (props: any) => {
                 options={options}
                 placeholder="Select Device Type"
                 keyboardType="default"
-                value={formData.device_type}
-                onChangeText={text => {
-                  handleChange({
-                    id: 'device_type',
-                    text,
-                  });
+                selected={formData.device_type}
+                onChange={val => {
+                  handleChangeDropdown(val);
                 }}
               />
             </View>
