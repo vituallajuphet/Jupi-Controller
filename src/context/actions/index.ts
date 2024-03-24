@@ -9,6 +9,11 @@ type userRegisterType = {
   password_confirmation: string;
 };
 
+type deleteDeviceType = {
+  slugs?: string[];
+  room_id?: number;
+};
+
 export const REGISTER_USER = async ({
   email,
   name,
@@ -64,6 +69,25 @@ export const TOGGLE_SWITCH = async (payload?: {
     return data.data;
   } catch (error: any) {
     console.log('err', error.response?.data);
+    return error.response?.data;
+  }
+};
+
+export const DELETE_DEVICES = async (payload?: deleteDeviceType) => {
+  try {
+    const token = await getToken();
+    const data = await axios.delete(`${URL}device`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      data: payload,
+    });
+
+    return data.data;
+  } catch (error: any) {
+    console.log('Errr', error.response);
     return error.response?.data;
   }
 };

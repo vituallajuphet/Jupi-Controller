@@ -13,13 +13,15 @@ import {useNavigation} from '@react-navigation/native';
 import {Image} from 'react-native';
 import {theme} from '../../utils/color';
 import {LoginContext} from '../../context';
-import {GET_ROOMS, TOGGLE_SWITCH} from '../../context/actions';
+import {DELETE_DEVICES, GET_ROOMS, TOGGLE_SWITCH} from '../../context/actions';
 import {StoreContext, StoreProvider} from '../../context/store';
 import EmptyList from './components/EmptyList';
 import {Button} from '../../components/controls';
 import {BASE_URL} from '../../utils';
 import Checkbox from '../../components/controls/Checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {color} from '../../theme/theme';
+import {SET_DEVICES, SET_ROOMS} from '../../context/store/reducers';
 
 type deviceTypes = {
   room?: {
@@ -37,9 +39,15 @@ const DevicesScreen = (props: any) => {
   const context = useContext(LoginContext);
   const store = useContext(StoreContext);
   const [selected, setSelected] = React.useState<any[]>([]);
-
-  const token = context.auth.token;
   const {room} = params;
+
+  const handleSelectedChange = item => {
+    if (selected?.findIndex(i => i.slug === item.slug) > -1) {
+      setSelected(selected.filter(i => i.slug !== item.slug));
+    } else {
+      setSelected([...selected, item]);
+    }
+  };
 
   const handleToggle = async item => {
     await TOGGLE_SWITCH({
@@ -54,6 +62,29 @@ const DevicesScreen = (props: any) => {
       });
   };
 
+  const deleteSelectedDevice = async () => {
+    try {
+      const data = await DELETE_DEVICES({
+        slugs: selected.map(i => i.slug),
+        room_id: room?.id,
+      });
+
+      if (data.status === 'success') {
+        setData();
+        setSelected([]);
+        store.dispatch({
+          type: SET_DEVICES,
+          payload: {
+            devices: data.devices,
+            room_slug: room?.slug,
+          },
+        });
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   const storeRooms = useMemo(() => {
     return store.state?.rooms?.length
       ? store.state?.rooms?.find(i => i.slug === room?.slug)
@@ -63,17 +94,9 @@ const DevicesScreen = (props: any) => {
   const setData = async () => {
     try {
       const devices = await GET_ROOMS();
-      store.dispatch({type: 'SET_ROOMS', payload: devices});
+      store.dispatch({type: SET_ROOMS, payload: devices});
     } catch (error) {
       console.log('errr', error);
-    }
-  };
-
-  const handleSelectedChange = item => {
-    if (selected?.findIndex(i => i.slug === item.slug) > -1) {
-      setSelected(selected.filter(i => i.slug !== item.slug));
-    } else {
-      setSelected([...selected, item]);
     }
   };
 
@@ -167,12 +190,26 @@ const DevicesScreen = (props: any) => {
           }}>
           Item Selected: {selected?.length}
         </Text>
-        <TouchableOpacity
-          onPress={() => {
-            setSelected([]);
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            columnGap: 20,
           }}>
-          <Icon name="close" size={30} />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              deleteSelectedDevice();
+            }}>
+            <Icon name="trash" size={30} color={color.danger} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setSelected([]);
+            }}>
+            <Icon name="close" size={30} />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -198,6 +235,7 @@ const DevicesScreen = (props: any) => {
           {storeRooms?.devices?.length ? (
             <>
               <FlatList
+                showsVerticalScrollIndicator={false}
                 data={storeRooms.devices}
                 renderItem={renderItem}
                 numColumns={2}
