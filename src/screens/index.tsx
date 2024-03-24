@@ -14,6 +14,7 @@ import TrainHeader from '../components/controls/TrainHeader';
 import {LoginContext} from '../context';
 import TestScreen from './auth/TestScreen';
 import RoomStacks from './RoomStacks/RoomStacks';
+import {UserProfile} from './auth/UserProfile';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +40,7 @@ const AppStack = () => {
         <Stack.Screen name="SmartHomeScreen" component={SmartHomeScreen} />
         <Stack.Screen name="TestScreen" component={TestScreen} />
         <Stack.Screen name="RoomStack" component={RoomStacks} />
+        <Stack.Screen name="UserProfile" component={UserProfile} />
       </>
     ) : (
       <>
