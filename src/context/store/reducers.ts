@@ -16,7 +16,7 @@ export const reducer = (state: any, action: any) => {
         ...state,
         rooms: state.rooms.map(room =>
           room.slug === action.payload.room_slug
-            ? {...room, devices: [...room.devices, action.payload]}
+            ? {...room, devices: [...room?.devices, action.payload]}
             : room,
         ),
       };

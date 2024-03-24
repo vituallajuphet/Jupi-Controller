@@ -56,7 +56,10 @@ const AddRoomScreen = (props: any) => {
     try {
       const data = await ADD_ROOM(formData);
       if (data.status === 'success') {
-        store.dispatch({type: 'ADD_ROOM', payload: data.room});
+        store.dispatch({
+          type: 'ADD_ROOM',
+          payload: {...data.room, devices: []},
+        });
         setOpen(false);
         _reset();
         setLoading(false);

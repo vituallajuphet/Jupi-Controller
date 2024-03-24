@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Switch,
 } from 'react-native';
-import React, {useContext, useMemo} from 'react';
+import React, {useCallback, useContext, useMemo} from 'react';
 import Header from '../../components/controls/Header';
 import {useNavigation} from '@react-navigation/native';
 import {Image} from 'react-native';
@@ -18,6 +18,8 @@ import {StoreContext, StoreProvider} from '../../context/store';
 import EmptyList from './components/EmptyList';
 import {Button} from '../../components/controls';
 import {BASE_URL} from '../../utils';
+import Checkbox from '../../components/controls/Checkbox';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 type deviceTypes = {
   room?: {
@@ -34,6 +36,7 @@ const DevicesScreen = (props: any) => {
   const params: deviceTypes = props.route.params;
   const context = useContext(LoginContext);
   const store = useContext(StoreContext);
+  const [selected, setSelected] = React.useState<any[]>([]);
 
   const token = context.auth.token;
   const {room} = params;
@@ -66,15 +69,51 @@ const DevicesScreen = (props: any) => {
     }
   };
 
+  const handleSelectedChange = item => {
+    if (selected?.findIndex(i => i.slug === item.slug) > -1) {
+      setSelected(selected.filter(i => i.slug !== item.slug));
+    } else {
+      setSelected([...selected, item]);
+    }
+  };
+
+  const _isSelected = useCallback(
+    items => {
+      return selected?.findIndex(i => i.slug === items.slug) > -1;
+    },
+    [selected],
+  );
+
+  const hasSelected = useMemo(() => {
+    return selected?.length > 0;
+  }, [selected?.length]);
+
   const renderItem = ({item}) => {
     const isOn = item?.status === 'on';
-
     return (
       <TouchableOpacity
         style={styles.item}
+        onLongPress={() => {
+          handleSelectedChange(item);
+        }}
         onPress={() => {
-          //   nav.navigate('DevicesScreen', {room: item});
+          if (hasSelected) {
+            handleSelectedChange(item);
+          }
         }}>
+        {hasSelected ? (
+          <Checkbox
+            style={{
+              position: 'absolute',
+              right: 10,
+              top: 10,
+            }}
+            onValueChange={() => {
+              handleSelectedChange(item);
+            }}
+            value={_isSelected(item)}
+          />
+        ) : null}
         <Image
           source={{
             uri:
@@ -112,6 +151,32 @@ const DevicesScreen = (props: any) => {
     );
   };
 
+  const _renderSelected = () => {
+    if (!selected?.length) return null;
+    return (
+      <View
+        style={{
+          marginBottom: 15,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <Text
+          style={{
+            fontSize: 16,
+          }}>
+          Item Selected: {selected?.length}
+        </Text>
+        <TouchableOpacity
+          onPress={() => {
+            setSelected([]);
+          }}>
+          <Icon name="close" size={30} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -129,6 +194,7 @@ const DevicesScreen = (props: any) => {
             flex: 1,
             padding: 10,
           }}>
+          {_renderSelected()}
           {storeRooms?.devices?.length ? (
             <>
               <FlatList
@@ -165,6 +231,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   item: {
+    position: 'relative',
     backgroundColor: '#2323236a',
     padding: 20,
     width: '48%',
