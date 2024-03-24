@@ -54,7 +54,7 @@ export const ADD_DEVICE = async (payload?: DeviceType) => {
     formdata.append('device_name', payload?.device_name);
     formdata.append('switch_number', payload?.switch_number);
     formdata.append('status', payload?.status);
-    formdata.append('device_type', payload?.device_type?.name);
+    formdata.append('device_type', payload?.device_type?.name || '');
     formdata.append('room_id', payload?.room_id);
 
     if (payload?.device_image_path) {

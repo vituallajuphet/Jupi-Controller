@@ -10,10 +10,11 @@ import {Text} from '.';
 
 type TextfieldProps = TextInputProps & {
   errorMessage?: string;
+  label?: string;
 };
 
 const Textfield = (props: TextfieldProps) => {
-  const {errorMessage} = props;
+  const {errorMessage, label} = props;
   const inputStyle: TextStyle = props.multiline
     ? {
         height: 100,
@@ -25,6 +26,7 @@ const Textfield = (props: TextfieldProps) => {
 
   return (
     <>
+      <Text style={[styles.label, {color: colorborder}]}>{label}</Text>
       <View style={[styles.container, {borderColor: colorborder}]}>
         <TextInput {...props} style={[styles.textInput, inputStyle]} />
       </View>
@@ -41,6 +43,10 @@ const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
     borderRadius: 10,
+  },
+  label: {
+    fontSize: 17,
+    marginBottom: 10,
   },
   error: {
     marginTop: 5,

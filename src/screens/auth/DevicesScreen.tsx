@@ -16,6 +16,8 @@ import {LoginContext} from '../../context';
 import {GET_ROOMS, TOGGLE_SWITCH} from '../../context/actions';
 import {StoreContext, StoreProvider} from '../../context/store';
 import EmptyList from './components/EmptyList';
+import {Button} from '../../components/controls';
+import {BASE_URL} from '../../utils';
 
 type deviceTypes = {
   room?: {
@@ -74,7 +76,11 @@ const DevicesScreen = (props: any) => {
           //   nav.navigate('DevicesScreen', {room: item});
         }}>
         <Image
-          source={{uri: 'https://dummyimage.com/100x100/000/fff'}}
+          source={{
+            uri:
+              `${BASE_URL}${item?.device_image_path}` ||
+              'https://dummyimage.com/100x100/000/fff',
+          }}
           style={{width: 60, height: 60, borderRadius: 50}}
         />
         <Text style={styles.itemText}>{item?.device_name}</Text>
@@ -124,15 +130,23 @@ const DevicesScreen = (props: any) => {
             padding: 10,
           }}>
           {storeRooms?.devices?.length ? (
-            <FlatList
-              data={storeRooms.devices}
-              renderItem={renderItem}
-              numColumns={2}
-              columnWrapperStyle={{gap: 10}}
-              contentContainerStyle={{
-                gap: 10,
-              }}
-            />
+            <>
+              <FlatList
+                data={storeRooms.devices}
+                renderItem={renderItem}
+                numColumns={2}
+                columnWrapperStyle={{gap: 10}}
+                contentContainerStyle={{
+                  gap: 10,
+                }}
+              />
+              <Button
+                onPress={() => {
+                  nav.navigate('AddDevices', {room: room});
+                }}>
+                Add Device
+              </Button>
+            </>
           ) : (
             <EmptyList room={room} />
           )}

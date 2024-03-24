@@ -23,10 +23,12 @@ type DropdownProps = Omit<TextInputProps, 'onChange'> & {
   placeholder?: string;
   onChange?: (value: optionType) => void;
   selected?: optionType | undefined;
+  errorMessage?: string;
+  label?: string;
 };
 
 const Dropdown = (props: DropdownProps) => {
-  const {placeholder, options, onChange, selected} = props;
+  const {placeholder, options, onChange, selected, errorMessage, label} = props;
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
 
@@ -51,8 +53,10 @@ const Dropdown = (props: DropdownProps) => {
     );
   };
 
+  const colorborder = errorMessage ? '#fa8d8d' : '#fff';
   return (
     <>
+      <Text style={[styles.label, {color: colorborder}]}>{label}</Text>
       <Modal visible={open} transparent>
         <View style={styles.modalContainer}>
           <Pressable onPress={() => setOpen(false)} style={styles.overlay} />
@@ -84,7 +88,7 @@ const Dropdown = (props: DropdownProps) => {
           </View>
         </View>
       </Modal>
-      <View style={styles.container}>
+      <View style={[styles.container, {borderColor: colorborder}]}>
         {/* <TextInput {...props} style={[styles.textInput]} /> */}
         <Pressable
           onPress={() => {
@@ -95,6 +99,11 @@ const Dropdown = (props: DropdownProps) => {
           <Icon name="chevron-down" size={15} />
         </Pressable>
       </View>
+      {errorMessage ? (
+        <View style={styles.error}>
+          <Text style={styles.errorTxt}>{errorMessage}</Text>
+        </View>
+      ) : null}
     </>
   );
 };
@@ -102,7 +111,6 @@ const Dropdown = (props: DropdownProps) => {
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: '#fff',
     borderRadius: 10,
   },
   headingTxt: {
@@ -114,6 +122,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 25,
+  },
+  label: {
+    fontSize: 17,
+    marginBottom: 10,
   },
   modalContent: {
     height: '90%',
@@ -140,6 +152,12 @@ const styles = StyleSheet.create({
   overlay: {
     backgroundColor: '#000000aa',
     flex: 1,
+  },
+  error: {
+    marginTop: 5,
+  },
+  errorTxt: {
+    color: '#fa8d8d',
   },
 });
 

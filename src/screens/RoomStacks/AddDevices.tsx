@@ -85,6 +85,7 @@ const AddDevices = (props: any) => {
       status: 'off',
       room_id: room.slug,
     });
+    setError(undefined);
   };
 
   const handleSave = async () => {
@@ -93,7 +94,10 @@ const AddDevices = (props: any) => {
       const data = await ADD_DEVICE(formData);
 
       if (data.status === 'success') {
-        // store.dispatch({type: 'ADD_ROOM', payload: data.room});
+        store.dispatch({
+          type: 'ADD_DEVICE',
+          payload: {...data.device, room_slug: room.slug},
+        });
         setOpen(false);
         _reset();
         setLoading(false);
@@ -193,8 +197,8 @@ const AddDevices = (props: any) => {
               )}
             </View>
             <View style={[styles.textContainer]}>
-              <Text style={styles.text}>Device Name</Text>
               <Textfield
+                label="Device Name"
                 errorMessage={
                   errors?.device_name ? errors?.device_name[0] : undefined
                 }
@@ -208,8 +212,8 @@ const AddDevices = (props: any) => {
               />
             </View>
             <View style={[styles.textContainer]}>
-              <Text style={styles.text}>Switch Number</Text>
               <Textfield
+                label="Switch Number"
                 keyboardType="numeric"
                 value={formData.switch_number}
                 errorMessage={
@@ -224,8 +228,11 @@ const AddDevices = (props: any) => {
               />
             </View>
             <View style={[styles.textContainer]}>
-              <Text style={styles.text}>Device Type</Text>
               <Dropdown
+                label="Device Type"
+                errorMessage={
+                  errors?.device_type ? errors?.device_type[0] : undefined
+                }
                 options={options}
                 placeholder="Select Device Type"
                 keyboardType="default"
