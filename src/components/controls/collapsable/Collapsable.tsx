@@ -22,7 +22,7 @@ const Collapsable: FC<CollapsableProps> = ({children, title, headerIcon}) => {
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
-      height: withTiming(animatedHeight.value, {duration: 200}),
+      minHeight: withTiming(animatedHeight.value, {duration: 200}),
       opacity: withTiming(opacity.value, {duration: 200}),
     };
   });

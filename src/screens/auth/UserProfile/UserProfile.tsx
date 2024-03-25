@@ -92,6 +92,7 @@ const UserProfile = (props: any) => {
                       padding: 20,
                     }}>
                     <Textfield label="Name" value={context.auth.user?.name} />
+                    <Textfield label="Name" value={context.auth.user?.name} />
                   </View>
                 </Collapsable>
                 <Collapsable
