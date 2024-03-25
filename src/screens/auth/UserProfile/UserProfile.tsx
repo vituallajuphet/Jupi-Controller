@@ -28,9 +28,11 @@ import {UPDATE_PROFILE} from '../../../context/actions';
 type UserProfileProps = {};
 type formType = {
   image?: any;
+  cover_image?: any;
   current_password?: string;
   password?: string;
   password_confirmation?: string;
+  contact?: string;
 };
 
 const UserProfile: FC<UserProfileProps> = (props: any) => {
@@ -46,6 +48,8 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
     current_password: '',
     password: '',
     password_confirmation: '',
+    cover_image: '',
+    contact: '',
   });
 
   const _renderEdit = () => {
@@ -68,6 +72,20 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
     } catch (error) {
       console.log('user data', error);
     }
+  };
+
+  const updatePassword = async () => {
+    try {
+      const data = await UPDATE_PROFILE({image: form.image});
+      store.dispatch({type: 'UPDATE_PROFILE', payload: data.user});
+      setForm({image: ''});
+    } catch (error) {
+      console.log('user data', error);
+    }
+  };
+
+  const handleChange = (key: string, value: string) => {
+    setForm(prev => ({...prev, [key]: value}));
   };
 
   const handleGetImage = () => {
@@ -131,7 +149,7 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                   marginTop: 30,
                 }}>
                 <Collapsable
-                  height={220}
+                  height={260}
                   headerIcon={<FIcon name="user" size={20} />}
                   title="Personal Information">
                   <View
@@ -139,7 +157,13 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                       padding: 20,
                     }}>
                     <View style={{marginBottom: 15}}>
-                      <Textfield label="Name" value={auth.name} />
+                      <Textfield
+                        label="Name"
+                        onChangeText={text => {
+                          handleChange('name', text);
+                        }}
+                        value={auth.name}
+                      />
                     </View>
                     <Textfield
                       editable={false}
@@ -147,10 +171,19 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                       label="Email"
                       value={auth?.email}
                     />
+                    <View style={styles.btnContainer}>
+                      <Button
+                        style={{
+                          width: 90,
+                          marginTop: 15,
+                        }}>
+                        Save
+                      </Button>
+                    </View>
                   </View>
                 </Collapsable>
                 <Collapsable
-                  height={300}
+                  height={370}
                   headerIcon={<FIcon name="lock" size={20} />}
                   title="Security">
                   <View
@@ -161,16 +194,40 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                       <Textfield
                         label="Current Password"
                         value={form.current_password}
+                        onChangeText={text => {
+                          handleChange('current_password', text);
+                        }}
                       />
-                    </View>
-                    <View style={{marginBottom: 15}}>
-                      <Textfield label="New Password" value={form.password} />
                     </View>
                     <View style={{marginBottom: 15}}>
                       <Textfield
+                        label="New Password"
+                        value={form.password}
+                        onChangeText={text => {
+                          handleChange('password', text);
+                        }}
+                      />
+                    </View>
+                    <View>
+                      <Textfield
                         label="Confirm Password"
                         value={form.password_confirmation}
+                        onChangeText={text => {
+                          handleChange('password_confirmation', text);
+                        }}
                       />
+                    </View>
+                    <View style={styles.btnContainer}>
+                      <Button
+                        onPress={() => {
+                          updatePassword();
+                        }}
+                        style={{
+                          width: 90,
+                          marginTop: 15,
+                        }}>
+                        Save
+                      </Button>
                     </View>
                   </View>
                 </Collapsable>
@@ -188,20 +245,17 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
             </View>
           </View>
         </KeyboardAwareScrollView>
-        <View style={{padding: 20}}>
-          <Button
-            onPress={() => {
-              handleUpdateProfilePic();
-            }}>
-            Update
-          </Button>
-        </View>
       </ImageBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    width: '100%',
+  },
   profileBtn: {
     position: 'absolute',
     zIndex: 100,
