@@ -15,14 +15,15 @@ import {LoginContext} from '../context';
 import TestScreen from './auth/TestScreen';
 import RoomStacks from './RoomStacks/RoomStacks';
 import {UserProfile} from './auth/UserProfile';
+import {StoreContext} from '../context/store';
 
 const Stack = createNativeStackNavigator();
 
 const AppStack = () => {
-  const context = useContext(LoginContext);
+  const store = useContext(StoreContext);
 
   const screens = () => {
-    return context.auth.user ? (
+    return store.state?.user?.auth ? (
       <>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="AddRoomScreen" component={AddRoomScreen} />

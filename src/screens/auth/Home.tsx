@@ -17,6 +17,7 @@ import Rooms from './components/Rooms';
 import {StoreContext} from '../../context/store';
 import {GET_ROOMS} from '../../context/actions';
 import {SET_ROOMS} from '../../context/reducers';
+import {withLoading} from '../../hoc';
 
 const Home = () => {
   const nav = useNavigation();
@@ -156,4 +157,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default Home;
+export default withLoading(Home);

@@ -6,18 +6,19 @@ import {TailwindProvider} from 'tailwind-rn';
 import {utilities} from './tailwind.json';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StoreProvider} from './src/context/store';
+import StoreView from './src/context/store/StoreView';
 
 const App = () => {
   return (
-    <LoginProvider>
-      <DataProvider>
-        <StoreProvider>
+    <DataProvider>
+      <StoreProvider>
+        <StoreView>
           <TailwindProvider utilities={utilities}>
             <AppStack />
           </TailwindProvider>
-        </StoreProvider>
-      </DataProvider>
-    </LoginProvider>
+        </StoreView>
+      </StoreProvider>
+    </DataProvider>
   );
 };
 

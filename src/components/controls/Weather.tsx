@@ -3,15 +3,13 @@ import React, {FC, useContext} from 'react';
 import {st} from '../../utils';
 import Icon from 'react-native-vector-icons/Feather';
 import {Button} from '.';
-import {LoginContext} from '../../context';
 import axios from 'axios';
 import {useDevicesCounts} from '../../hooks';
 import {StoreContext} from '../../context/store';
 
 const WeatherHome: FC<any> = props => {
   const store = useContext(StoreContext);
-  const context = useContext(LoginContext);
-  const {active, inactive} = useDevicesCounts(store.state?.rooms);
+  const {active, inactive} = useDevicesCounts(store.state?.room?.rooms);
   return (
     <View style={styles.container}>
       <View>
@@ -32,22 +30,7 @@ const WeatherHome: FC<any> = props => {
           </View>
         </View>
       </View>
-      <Button
-        style={{marginTop: 20}}
-        onPress={() => {
-          axios
-            .get('http://localhost:8000/api/jupi/getdata/', {
-              headers: {
-                Authorization: `Bearer ${context.auth.token}`,
-              },
-            })
-            .then(res => {
-              console.log('ress', res.data);
-            })
-            .catch(err => {
-              console.warn('err', err);
-            });
-        }}>
+      <Button style={{marginTop: 20}} onPress={() => {}}>
         TURN OFF ALL DEVICES
       </Button>
     </View>

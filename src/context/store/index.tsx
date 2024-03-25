@@ -1,6 +1,6 @@
 import React, {createContext, useReducer} from 'react';
 import {combineReducers} from './utils';
-import {room_reducer, user_reducer} from '../reducers';
+import {appstate_reducer, room_reducer, user_reducer} from '../reducers';
 import {StateTypes} from '../types';
 
 interface dataContext {
@@ -10,10 +10,18 @@ interface dataContext {
 
 export const StoreContext = createContext<dataContext>({});
 
-export const initialState = {
-  room: [],
-  device: [],
-  user: undefined,
+export const initialState: StateTypes = {
+  room: {
+    rooms: [],
+  },
+  devices: [],
+  user: {
+    auth: undefined,
+  },
+  appState: {
+    loading: false,
+    error: undefined,
+  },
 };
 
 export const StoreProvider: React.FC<any> = ({children}) => {
@@ -21,6 +29,7 @@ export const StoreProvider: React.FC<any> = ({children}) => {
     combineReducers({
       room: room_reducer,
       user: user_reducer,
+      appState: appstate_reducer,
     }),
     initialState,
   );

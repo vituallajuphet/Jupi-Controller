@@ -22,16 +22,16 @@ import {
 import {StoreContext} from '../../context/store';
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/Feather';
-import {LoginContext} from '../../context';
 import {withLoading} from '../../hoc';
 import {ADD_ROOM} from '../../context/actions';
 
 const AddRoomScreen = (props: any) => {
   const nav = useNavigation();
   const store = useContext(StoreContext);
-  const appContext = useContext(LoginContext);
-  const {setLoading, loading} = appContext;
+
   const [open, setOpen] = React.useState(false);
+
+  const loading = store.state?.appState.loading;
 
   const [formData, setFormData] = React.useState<any>({
     room_name: '',
@@ -52,7 +52,6 @@ const AddRoomScreen = (props: any) => {
   };
 
   const handleSave = async () => {
-    setLoading(true);
     try {
       const data = await ADD_ROOM(formData);
       if (data.status === 'success') {
@@ -62,11 +61,9 @@ const AddRoomScreen = (props: any) => {
         });
         setOpen(false);
         _reset();
-        setLoading(false);
       }
     } catch (error) {
       console.log('errr', error);
-      setLoading(false);
     }
   };
 

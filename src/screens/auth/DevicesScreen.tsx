@@ -12,7 +12,6 @@ import Header from '../../components/controls/Header';
 import {useNavigation} from '@react-navigation/native';
 import {Image} from 'react-native';
 import {theme} from '../../utils/color';
-import {LoginContext} from '../../context';
 import {DELETE_DEVICES, GET_ROOMS, TOGGLE_SWITCH} from '../../context/actions';
 import {StoreContext} from '../../context/store';
 import EmptyList from './components/EmptyList';
@@ -36,7 +35,6 @@ type deviceTypes = {
 const DevicesScreen = (props: any) => {
   const nav = useNavigation();
   const params: deviceTypes = props.route.params;
-  const context = useContext(LoginContext);
   const store = useContext(StoreContext);
   const [selected, setSelected] = React.useState<any[]>([]);
   const {room} = params;

@@ -24,7 +24,6 @@ import {ADD_DEVICE} from '../../context/actions';
 import {StoreContext} from '../../context/store';
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/Feather';
-import {LoginContext} from '../../context';
 import {withLoading} from '../../hoc';
 import {optionType} from '../../components/controls/Dropdown';
 import {deviceErrorType, formType} from './types';
@@ -52,8 +51,7 @@ const options: optionType[] = [
 const AddDevices = (props: any) => {
   const nav = useNavigation();
   const store = useContext(StoreContext);
-  const appContext = useContext(LoginContext);
-  const {setLoading, loading} = appContext;
+  const loading = store.state?.appState.loading;
   const [open, setOpen] = React.useState(false);
   const [errors, setError] = React.useState<deviceErrorType<string[]>>();
 
@@ -89,7 +87,6 @@ const AddDevices = (props: any) => {
   };
 
   const handleSave = async () => {
-    setLoading(true);
     try {
       const data = await ADD_DEVICE(formData);
 
@@ -100,14 +97,12 @@ const AddDevices = (props: any) => {
         });
         setOpen(false);
         _reset();
-        setLoading(false);
       }
     } catch (error: any) {
       setOpen(false);
       if (error.errors) {
         setError(error.errors);
       }
-      setLoading(false);
     }
   };
 

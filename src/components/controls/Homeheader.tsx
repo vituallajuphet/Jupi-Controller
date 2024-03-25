@@ -2,9 +2,12 @@ import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import React, {useContext} from 'react';
 import {LoginContext} from '../../context';
 import {useNavigation} from '@react-navigation/native';
+import {StoreContext} from '../../context/store';
 
 const Homeheader = () => {
-  const context = useContext(LoginContext);
+  const store = useContext(StoreContext);
+
+  const auth = store.state?.user?.auth;
   const nav = useNavigation();
 
   const jumpToProfile = () => {
@@ -16,7 +19,7 @@ const Homeheader = () => {
       <View style={styles.inner}>
         <Image style={styles.img} source={require('../../images/img.png')} />
         <View>
-          <Text style={styles.name}>{context.auth?.user?.name}</Text>
+          <Text style={styles.name}>{auth.name}</Text>
           <Text style={{fontSize: 14}}>All is in your hand now</Text>
         </View>
       </View>

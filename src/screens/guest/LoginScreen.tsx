@@ -8,18 +8,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {LoginContext} from '../../context';
 import {withLoading} from '../../hoc';
+import {LOGIN} from '../../context/actions';
+import {StoreContext} from '../../context/store';
+import {useLoading} from '../../context/hooks';
 
 const rnBiometrics = new ReactNativeBiometrics({allowDeviceCredentials: true});
 
 const LoginScreen: React.FC<any> = props => {
-  const context = useContext(LoginContext);
+  const store = useContext(StoreContext);
   const [supported, setSupported] = useState(false);
   const {navigate} = props.navigation;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const {setLoading} = useLoading(store);
 
   useEffect(() => {
     initializeBiometric();
@@ -51,14 +54,19 @@ const LoginScreen: React.FC<any> = props => {
         fallbackPromptMessage: 'Please enter',
       })
       .then(resultObject => {
-        console.log('resultObject', resultObject);
         const {success} = resultObject;
 
         if (success) {
-          context.login({
-            email: 'test@test.com',
-            password: 'pass1234',
-          });
+          setLoading(true);
+          LOGIN({email: 'test@test.com', password: 'pass1234'})
+            .then(data => {
+              store.dispatch({type: 'LOGIN', payload: data.user});
+              setLoading(false);
+            })
+            .catch(error => {
+              console.log('errr', error);
+              setLoading(false);
+            });
         } else {
           console.log('user cancelled biometric prompt');
         }
@@ -68,14 +76,21 @@ const LoginScreen: React.FC<any> = props => {
       });
   };
 
-  const login = () => {
-    context.login({
-      email,
-      password,
-    });
+  const login = async () => {
+    setLoading(true);
+    try {
+      const data = await LOGIN({email, password});
+      if (data?.user) {
+        store.dispatch({type: 'LOGIN', payload: data.user});
+        setLoading(false);
+      }
+    } catch (error: any) {
+      setLoading(false);
+      throw error.response?.data;
+    }
   };
 
-  const errorStyle = context.errors ? styles.inputError : null;
+  // const errorStyle = context.errors ? styles.inputError : null;
 
   return (
     <View style={styles.container}>
@@ -94,19 +109,19 @@ const LoginScreen: React.FC<any> = props => {
           <View style={styles.inputContainer}>
             <TextInput
               placeholder="Email"
-              style={[styles.input, errorStyle]}
+              style={[styles.input]}
               onChangeText={text => {
                 setEmail(text);
               }}
               value={email}
             />
-            {context.errors ? (
+            {/* {context.errors ? (
               <View style={styles.errorContainer}>
                 <Text style={styles.errorTxt}>
                   {context?.errors?.login || context?.errors?.email}
                 </Text>
               </View>
-            ) : null}
+            ) : null} */}
           </View>
 
           <View style={styles.inputContainer}>
@@ -119,11 +134,11 @@ const LoginScreen: React.FC<any> = props => {
               placeholder="Password"
               style={styles.input}
             />
-            {context.errors ? (
+            {/* {context.errors ? (
               <View style={styles.errorContainer}>
                 <Text style={styles.errorTxt}>{context?.errors?.password}</Text>
               </View>
-            ) : null}
+            ) : null} */}
           </View>
           <TouchableOpacity
             style={styles.button}

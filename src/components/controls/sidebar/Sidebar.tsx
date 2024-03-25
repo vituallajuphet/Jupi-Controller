@@ -27,12 +27,15 @@ import Icon from 'react-native-vector-icons/Feather';
 import {Button} from '..';
 import {useNavigation} from '@react-navigation/native';
 import {st} from '../../../utils';
-import {LoginContext} from '../../../context';
+import {StoreContext} from '../../../context/store';
+import {LOGOUT} from '../../../context/actions';
+import {useLoading} from '../../../context/hooks';
 
 const {height} = Dimensions.get('window');
 const Sidebar = forwardRef<View, any>((props, ref) => {
   const nav = useNavigation();
-  const authContext = useContext(LoginContext);
+  const store = useContext(StoreContext);
+  const {setLoading} = useLoading(store);
 
   const [open, setOpen] = React.useState(false);
 
@@ -117,6 +120,20 @@ const Sidebar = forwardRef<View, any>((props, ref) => {
     [handleOPen, handleClose],
   );
 
+  const logoutUser = async () => {
+    setLoading(true);
+    try {
+      const data = await LOGOUT();
+      if (data.status === 'success') {
+        store.dispatch({type: 'LOGOUT'});
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log('error', error);
+      setLoading(false);
+    }
+  };
+
   return (
     <View ref={ref}>
       <TouchableOpacity
@@ -169,7 +186,7 @@ const Sidebar = forwardRef<View, any>((props, ref) => {
               }}>
               <Button
                 onPress={() => {
-                  authContext.logout(authContext.auth.token);
+                  logoutUser();
                 }}>
                 Logout
               </Button>

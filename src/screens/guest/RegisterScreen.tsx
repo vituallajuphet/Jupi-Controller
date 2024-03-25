@@ -8,12 +8,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {LoginContext} from '../../context';
 import {REGISTER_USER} from '../../context/actions';
 import {withLoading} from '../../hoc';
+import {StoreContext} from '../../context/store';
+import {REGISTER} from '../../context/reducers';
 
 const RegisterScreen: React.FC<any> = props => {
-  const context = useContext(LoginContext);
+  const store = useContext(StoreContext);
 
   const [data, setData] = React.useState({
     name: '',
@@ -28,12 +29,13 @@ const RegisterScreen: React.FC<any> = props => {
   };
 
   const register = async () => {
-    const response = await REGISTER_USER(data);
-    if (response.token) {
-      context.register({
-        token: response.token,
-        user: response.user,
-      });
+    try {
+      const response = await REGISTER_USER(data);
+      if (response.token) {
+        store.dispatch({type: REGISTER, payload: response.user});
+      }
+    } catch (error) {
+      console.log('error', error);
     }
   };
 

@@ -12,7 +12,6 @@ import React, {useContext, useEffect, useMemo} from 'react';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import {Loading, Textfield} from '../../../components/controls';
-import {LoginContext} from '../../../context';
 import Header from '../../../components/controls/Header';
 import {useNavigation} from '@react-navigation/native';
 import {withLoading} from '../../../hoc';
@@ -22,11 +21,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import FIcon from 'react-native-vector-icons/Feather';
 import {Collapsable} from '../../../components/controls/collapsable';
 import ImageCropPicker from 'react-native-image-crop-picker';
+import {StoreContext} from '../../../context/store';
 
 const UserProfile = (props: any) => {
-  const context = useContext(LoginContext);
-  const {setLoading, loading} = context;
+  const store = useContext(StoreContext);
   const nav = useNavigation();
+  const loading = store.state?.appState?.loading;
+  const auth = store.state?.user?.auth;
 
   const _renderEdit = () => {
     return (
@@ -95,9 +96,9 @@ const UserProfile = (props: any) => {
                     fontWeight: 'bold',
                     color: '#fff',
                   }}>
-                  {context.auth.user?.name}
+                  {auth?.name}
                 </Text>
-                <Text>{context.auth.user?.email}</Text>
+                <Text>{auth.email}</Text>
               </View>
               <View
                 style={{
@@ -110,8 +111,8 @@ const UserProfile = (props: any) => {
                     style={{
                       padding: 20,
                     }}>
-                    <Textfield label="Name" value={context.auth.user?.name} />
-                    <Textfield label="Name" value={context.auth.user?.name} />
+                    <Textfield label="Name" value={auth.name} />
+                    <Textfield label="Name" value={auth?.name} />
                   </View>
                 </Collapsable>
                 <Collapsable

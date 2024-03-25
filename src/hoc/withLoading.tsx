@@ -1,14 +1,15 @@
 import React, {ComponentType, useContext} from 'react';
 import {Loading} from '../components/controls';
-import {LoginContext} from '../context';
+import {StoreContext} from '../context/store';
 
 function withLoading(Component: ComponentType<any>) {
   return function WithLoadingComponent({isLoading, ...props}: any) {
-    const context = useContext(LoginContext);
+    const store = useContext(StoreContext);
+    const loading = store.state?.appState?.loading;
 
     return (
       <>
-        {context.loading ? <Loading /> : null}
+        {loading ? <Loading /> : null}
         <Component {...props} />
       </>
     );

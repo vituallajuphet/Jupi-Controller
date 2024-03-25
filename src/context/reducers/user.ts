@@ -1,4 +1,5 @@
 export const LOGIN = 'LOGIN';
+export const REGISTER = 'REGISTER';
 export const LOGOUT = 'LOGOUT';
 export const UPDATE_PROFILE = 'UPDATE_PROFILE';
 
@@ -7,17 +8,22 @@ export const user_reducer = (state: any, action: any) => {
     case LOGIN:
       return {
         ...state,
-        user: action.payload,
+        auth: action.payload,
+      };
+    case REGISTER:
+      return {
+        ...state,
+        auth: action.payload,
       };
     case LOGOUT:
       return {
         ...state,
-        user: undefined,
+        auth: undefined,
       };
     case UPDATE_PROFILE:
       return {
         ...state,
-        user: action.payload,
+        auth: action.payload,
       };
     default:
       return state;
