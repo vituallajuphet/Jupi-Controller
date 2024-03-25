@@ -1,22 +1,39 @@
-import {View, Text, StyleSheet, ImageBackground, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  Image,
+  Touchable,
+  TouchableOpacity,
+} from 'react-native';
 import React, {useContext, useEffect, useMemo} from 'react';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-import {Loading} from '../../../components/controls';
+import {Loading, Textfield} from '../../../components/controls';
 import {LoginContext} from '../../../context';
 import Header from '../../../components/controls/Header';
 import {useNavigation} from '@react-navigation/native';
 import {withLoading} from '../../../hoc';
 import {BASE_URL} from '../../../utils';
 import {color} from '../../../theme/theme';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import FIcon from 'react-native-vector-icons/Feather';
+import {Collapsable} from '../../../components/controls/collapsable';
 
 const UserProfile = (props: any) => {
   const context = useContext(LoginContext);
   const {setLoading, loading} = context;
   const nav = useNavigation();
 
-  console.log('context.auth.user', context.auth.user);
+  const _renderEdit = () => {
+    return (
+      <TouchableOpacity style={styles.profileBtn}>
+        <Icon name="pencil" size={17} color={color.primary} />
+      </TouchableOpacity>
+    );
+  };
 
   if (loading) return <Loading />;
 
@@ -31,18 +48,63 @@ const UserProfile = (props: any) => {
             style={{
               flex: 1,
             }}>
-            <View style={styles.cover}>
-              <Image
-                source={{
-                  uri: `${BASE_URL}storage/2024/devices/0MVHvPWu0S1711262794.jpg`, // dummy profile url
-                }}
-                resizeMode="cover"
-                style={styles.profile}
-              />
-            </View>
-            <View style={{}}>
-              <Text>{context.auth.user?.name}</Text>
-              <Text>{context.auth.user?.email}</Text>
+            <ImageBackground
+              style={styles.cover}
+              source={require('./assets/cover.jpg')}
+              resizeMode="cover">
+              <View style={styles.overlay} />
+              <View style={styles.profile}>
+                {_renderEdit()}
+                <Image
+                  source={{
+                    uri: `${BASE_URL}storage/2024/devices/0MVHvPWu0S1711262794.jpg`, // dummy profile url
+                  }}
+                  resizeMode="cover"
+                  style={styles.profilePic}
+                />
+              </View>
+            </ImageBackground>
+            <View style={styles.contentBottom}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 25,
+                    fontWeight: 'bold',
+                    color: '#fff',
+                  }}>
+                  {context.auth.user?.name}
+                </Text>
+                <Text>{context.auth.user?.email}</Text>
+              </View>
+              <View
+                style={{
+                  marginTop: 30,
+                }}>
+                <Collapsable
+                  headerIcon={<FIcon name="user" size={20} />}
+                  title="Personal Information">
+                  <View
+                    style={{
+                      padding: 20,
+                    }}>
+                    <Textfield label="Name" value={context.auth.user?.name} />
+                  </View>
+                </Collapsable>
+                <Collapsable
+                  headerIcon={<FIcon name="settings" size={20} />}
+                  title="Account Settings">
+                  <View
+                    style={{
+                      padding: 20,
+                    }}>
+                    <Text>eeee</Text>
+                  </View>
+                </Collapsable>
+              </View>
             </View>
           </View>
         </KeyboardAwareScrollView>
@@ -52,9 +114,24 @@ const UserProfile = (props: any) => {
 };
 
 const styles = StyleSheet.create({
+  profileBtn: {
+    position: 'absolute',
+    zIndex: 100,
+    borderRadius: 100,
+    backgroundColor: color.white,
+    padding: 7,
+    width: 30,
+    height: 30,
+    bottom: -5,
+    right: 5,
+  },
   container: {
     flex: 1,
     backgroundColor: 'transparent',
+  },
+  contentBottom: {
+    padding: 20,
+    paddingTop: 50,
   },
   bg: {
     width: '100%',
@@ -63,10 +140,10 @@ const styles = StyleSheet.create({
   cover: {
     height: 140,
     width: '100%',
-    backgroundColor: color.dark,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  profilePic: {width: '100%', height: '100%', borderRadius: 100},
   profile: {
     height: 100,
     width: 100,
@@ -76,6 +153,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 80,
     elevation: 0,
+    borderWidth: 3,
+    borderColor: '#fff',
+  },
+  overlay: {
+    backgroundColor: '#0f0f0f7e',
+    height: '100%',
+    width: '100%',
   },
 });
 
