@@ -14,23 +14,29 @@ type CollapsableProps = {
   title: string;
   children?: React.ReactNode;
   headerIcon?: React.ReactNode;
+  height: number;
 };
 
-const Collapsable: FC<CollapsableProps> = ({children, title, headerIcon}) => {
+const Collapsable: FC<CollapsableProps> = ({
+  children,
+  title,
+  headerIcon,
+  height,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const animatedHeight = useSharedValue(0);
   const opacity = useSharedValue(0);
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
-      height: withTiming(animatedHeight.value, {duration: 200}),
       opacity: withTiming(opacity.value, {duration: 200}),
+      height: withTiming(animatedHeight.value, {duration: 200}),
     };
   });
 
   const toggle = () => {
     setIsOpen(!isOpen);
-    animatedHeight.value = isOpen ? 0 : 100;
+    animatedHeight.value = isOpen ? 0 : height;
     opacity.value = isOpen ? 0 : 1;
   };
 

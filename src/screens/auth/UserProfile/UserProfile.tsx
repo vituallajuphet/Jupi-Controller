@@ -28,6 +28,9 @@ import {UPDATE_PROFILE} from '../../../context/actions';
 type UserProfileProps = {};
 type formType = {
   image?: any;
+  current_password?: string;
+  password?: string;
+  password_confirmation?: string;
 };
 
 const UserProfile: FC<UserProfileProps> = (props: any) => {
@@ -40,6 +43,9 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
 
   const [form, setForm] = React.useState<formType>({
     image: '',
+    current_password: '',
+    password: '',
+    password_confirmation: '',
   });
 
   const _renderEdit = () => {
@@ -86,11 +92,8 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
         style={styles.bg}
         source={require('../../../images/bg.jpg')}
         resizeMode="cover">
-        <KeyboardAwareScrollView contentContainerStyle={{flex: 1}}>
-          <View
-            style={{
-              flex: 1,
-            }}>
+        <KeyboardAwareScrollView style={{flex: 1}}>
+          <View>
             <ImageBackground
               style={styles.cover}
               source={require('./assets/cover.jpg')}
@@ -128,14 +131,47 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                   marginTop: 30,
                 }}>
                 <Collapsable
+                  height={220}
                   headerIcon={<FIcon name="user" size={20} />}
                   title="Personal Information">
                   <View
                     style={{
                       padding: 20,
                     }}>
-                    <Textfield label="Name" value={auth.name} />
-                    <Textfield label="Name" value={auth?.name} />
+                    <View style={{marginBottom: 15}}>
+                      <Textfield label="Name" value={auth.name} />
+                    </View>
+                    <Textfield
+                      editable={false}
+                      keyboardType="email-address"
+                      label="Email"
+                      value={auth?.email}
+                    />
+                  </View>
+                </Collapsable>
+                <Collapsable
+                  height={300}
+                  headerIcon={<FIcon name="lock" size={20} />}
+                  title="Security">
+                  <View
+                    style={{
+                      padding: 20,
+                    }}>
+                    <View style={{marginBottom: 15}}>
+                      <Textfield
+                        label="Current Password"
+                        value={form.current_password}
+                      />
+                    </View>
+                    <View style={{marginBottom: 15}}>
+                      <Textfield label="New Password" value={form.password} />
+                    </View>
+                    <View style={{marginBottom: 15}}>
+                      <Textfield
+                        label="Confirm Password"
+                        value={form.password_confirmation}
+                      />
+                    </View>
                   </View>
                 </Collapsable>
                 <Collapsable
