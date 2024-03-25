@@ -14,14 +14,14 @@ import {Image} from 'react-native';
 import {theme} from '../../utils/color';
 import {LoginContext} from '../../context';
 import {DELETE_DEVICES, GET_ROOMS, TOGGLE_SWITCH} from '../../context/actions';
-import {StoreContext, StoreProvider} from '../../context/store';
+import {StoreContext} from '../../context/store';
 import EmptyList from './components/EmptyList';
 import {Button} from '../../components/controls';
 import {BASE_URL} from '../../utils';
 import Checkbox from '../../components/controls/Checkbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {color} from '../../theme/theme';
-import {SET_DEVICES, SET_ROOMS} from '../../context/store/reducers';
+import {SET_DEVICES, SET_ROOMS} from '../../context/reducers';
 
 type deviceTypes = {
   room?: {
@@ -40,6 +40,8 @@ const DevicesScreen = (props: any) => {
   const store = useContext(StoreContext);
   const [selected, setSelected] = React.useState<any[]>([]);
   const {room} = params;
+
+  const rooms = store.state?.room;
 
   const handleSelectedChange = item => {
     if (selected?.findIndex(i => i.slug === item.slug) > -1) {
@@ -86,10 +88,10 @@ const DevicesScreen = (props: any) => {
   };
 
   const storeRooms = useMemo(() => {
-    return store.state?.rooms?.length
-      ? store.state?.rooms?.find(i => i.slug === room?.slug)
+    return rooms?.rooms?.length
+      ? rooms?.rooms?.find(i => i.slug === room?.slug)
       : [];
-  }, [store.state?.rooms]);
+  }, [rooms?.rooms]);
 
   const setData = async () => {
     try {

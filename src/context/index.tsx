@@ -41,7 +41,6 @@ export const LoginProvider: React.FC<any> = ({children}) => {
     user: undefined,
   });
   const [loading, setLoading] = useState<boolean>(false);
-
   const [errors, setErrors] = useState<any>(undefined);
 
   useEffect(() => {

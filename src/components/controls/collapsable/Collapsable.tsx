@@ -4,6 +4,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
+  useDerivedValue,
 } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FIcon from 'react-native-vector-icons/Feather';
@@ -22,7 +23,7 @@ const Collapsable: FC<CollapsableProps> = ({children, title, headerIcon}) => {
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
-      minHeight: withTiming(animatedHeight.value, {duration: 200}),
+      height: withTiming(animatedHeight.value, {duration: 200}),
       opacity: withTiming(opacity.value, {duration: 200}),
     };
   });

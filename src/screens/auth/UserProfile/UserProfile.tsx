@@ -21,6 +21,7 @@ import {color} from '../../../theme/theme';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FIcon from 'react-native-vector-icons/Feather';
 import {Collapsable} from '../../../components/controls/collapsable';
+import ImageCropPicker from 'react-native-image-crop-picker';
 
 const UserProfile = (props: any) => {
   const context = useContext(LoginContext);
@@ -29,10 +30,28 @@ const UserProfile = (props: any) => {
 
   const _renderEdit = () => {
     return (
-      <TouchableOpacity style={styles.profileBtn}>
+      <TouchableOpacity
+        onPress={() => {
+          handleGetImage();
+        }}
+        style={styles.profileBtn}>
         <Icon name="pencil" size={17} color={color.primary} />
       </TouchableOpacity>
     );
+  };
+
+  const handleGetImage = () => {
+    ImageCropPicker.openPicker({
+      width: 200,
+      height: 200,
+      cropping: true,
+    })
+      .then(image => {
+        console.log('image', image);
+      })
+      .catch(err => {
+        console.log('err', err);
+      });
   };
 
   if (loading) return <Loading />;
@@ -139,7 +158,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cover: {
-    height: 140,
+    height: 190,
     width: '100%',
     justifyContent: 'flex-end',
     alignItems: 'center',
@@ -152,7 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
     zIndex: 20,
     position: 'absolute',
-    top: 80,
+    top: 130,
     elevation: 0,
     borderWidth: 3,
     borderColor: '#fff',

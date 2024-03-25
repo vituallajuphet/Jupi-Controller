@@ -19,12 +19,12 @@ import {
   Loading,
   Textfield,
 } from '../../components/controls';
-import {ADD_ROOM} from '../../context/actions';
 import {StoreContext} from '../../context/store';
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/Feather';
 import {LoginContext} from '../../context';
 import {withLoading} from '../../hoc';
+import {ADD_ROOM} from '../../context/actions';
 
 const AddRoomScreen = (props: any) => {
   const nav = useNavigation();

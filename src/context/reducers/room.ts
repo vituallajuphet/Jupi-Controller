@@ -1,9 +1,9 @@
-export const SET_DEVICES = 'SET_DEVICES';
-export const ADD_DEVICE = 'ADD_DEVICE';
 export const ADD_ROOM = 'ADD_ROOM';
 export const SET_ROOMS = 'SET_ROOMS';
+export const ADD_DEVICE = 'ADD_DEVICE';
+export const SET_DEVICES = 'SET_DEVICES';
 
-export const reducer = (state: any, action: any) => {
+export const room_reducer = (state: any, action: any) => {
   switch (action.type) {
     case SET_ROOMS:
       return {
@@ -15,7 +15,6 @@ export const reducer = (state: any, action: any) => {
         ...state,
         rooms: [...state.rooms, action.payload],
       };
-
     case ADD_DEVICE:
       return {
         ...state,
@@ -34,6 +33,7 @@ export const reducer = (state: any, action: any) => {
             : room,
         ),
       };
+
     default:
       return state;
   }

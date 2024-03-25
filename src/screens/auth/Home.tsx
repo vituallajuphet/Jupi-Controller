@@ -12,15 +12,16 @@ import Icon from 'react-native-vector-icons/FontAwesome6';
 import Homeheader from '../../components/controls/Homeheader';
 import WeatherHome from '../../components/controls/Weather';
 import Sidebar from '../../components/controls/sidebar/Sidebar';
-import {GET_ROOMS} from '../../context/actions';
 import {LoginContext} from '../../context';
 import Rooms from './components/Rooms';
 import {StoreContext} from '../../context/store';
+import {GET_ROOMS} from '../../context/actions';
+import {SET_ROOMS} from '../../context/reducers';
 
 const Home = () => {
   const nav = useNavigation();
-  const context = useContext(LoginContext);
   const store = useContext(StoreContext);
+  const room = store.state?.room;
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -46,7 +47,7 @@ const Home = () => {
   const setData = async () => {
     try {
       const devices = await GET_ROOMS();
-      store.dispatch({type: 'SET_ROOMS', payload: devices});
+      store.dispatch({type: SET_ROOMS, payload: devices});
       setRefreshing(false);
     } catch (error) {
       console.log('errr', error);
@@ -80,7 +81,7 @@ const Home = () => {
               }}>
               <Homeheader />
               <WeatherHome />
-              <Rooms rooms={store.state?.rooms} />
+              <Rooms rooms={room?.rooms} />
 
               {/* <View style={style.boxContainer}>
               <TouchableOpacity

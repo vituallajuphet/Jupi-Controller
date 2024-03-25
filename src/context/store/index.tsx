@@ -1,23 +1,29 @@
-import React, {createContext, useReducer, useState} from 'react';
-import {reducer} from './reducers';
-
-type stateType = {
-  rooms?: Array<any>;
-};
+import React, {createContext, useReducer} from 'react';
+import {combineReducers} from './utils';
+import {room_reducer, user_reducer} from '../reducers';
+import {StateTypes} from '../types';
 
 interface dataContext {
-  state?: stateType;
+  state?: StateTypes;
   dispatch?: any;
 }
 
 export const StoreContext = createContext<dataContext>({});
 
 export const initialState = {
-  rooms: [],
+  room: [],
+  device: [],
+  user: undefined,
 };
 
 export const StoreProvider: React.FC<any> = ({children}) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(
+    combineReducers({
+      room: room_reducer,
+      user: user_reducer,
+    }),
+    initialState,
+  );
 
   return (
     <StoreContext.Provider value={{state, dispatch}}>
