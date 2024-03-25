@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {URL, getToken} from '../../utils';
+import {URL, getImageBase64, getToken} from '../../utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type userRegisterType = {
@@ -36,7 +36,6 @@ export const REGISTER_USER = async ({
 
 export const LOGIN = async (payload: LoginType) => {
   const {email, password} = payload;
-  // setLoading(true);
   try {
     const data = await axios.post(`${URL}login`, {
       email,
@@ -44,24 +43,8 @@ export const LOGIN = async (payload: LoginType) => {
     });
     await AsyncStorage.setItem('appToken', data?.data?.token);
     return data.data;
-    // if (responseData?.token) {
-    //   setAuth({
-    //     token: responseData?.token,
-    //     user: responseData.user,
-    //   });
-    //
-    //   // setLoading(false);
-    // }
   } catch (error: any) {
     throw error.response?.data;
-    if (error.response?.data?.errors) {
-      // console.log(
-      //   'error.response?.data?.errors',
-      //   error.response?.data?.errors,
-      // );
-      // setErrors(error?.response?.data?.errors);
-      // setLoading(false);
-    }
   }
 };
 
@@ -77,6 +60,30 @@ export const LOGOUT = async () => {
         },
       },
     );
+    return data.data;
+  } catch (error: any) {
+    throw error.response?.data;
+  }
+};
+
+export const UPDATE_PROFILE = async (payload: {image: undefined}) => {
+  try {
+    const token = await getToken();
+
+    const formdata = new FormData();
+
+    if (payload?.image) {
+      formdata.append('image', await getImageBase64(payload?.image));
+    }
+
+    const data = await axios.post(`${URL}profile-picture/`, formdata, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
     return data.data;
   } catch (error: any) {
     throw error.response?.data;

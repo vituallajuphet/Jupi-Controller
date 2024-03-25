@@ -7,11 +7,11 @@ import {
   Touchable,
   TouchableOpacity,
 } from 'react-native';
-import React, {useContext, useEffect, useMemo} from 'react';
+import React, {FC, useContext, useEffect, useMemo} from 'react';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-import {Loading, Textfield} from '../../../components/controls';
+import {Button, Loading, Textfield} from '../../../components/controls';
 import Header from '../../../components/controls/Header';
 import {useNavigation} from '@react-navigation/native';
 import {withLoading} from '../../../hoc';
@@ -22,12 +22,25 @@ import FIcon from 'react-native-vector-icons/Feather';
 import {Collapsable} from '../../../components/controls/collapsable';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {StoreContext} from '../../../context/store';
+import {useLoading} from '../../../context/hooks';
+import {UPDATE_PROFILE} from '../../../context/actions';
 
-const UserProfile = (props: any) => {
+type UserProfileProps = {};
+type formType = {
+  image?: any;
+};
+
+const UserProfile: FC<UserProfileProps> = (props: any) => {
   const store = useContext(StoreContext);
   const nav = useNavigation();
   const loading = store.state?.appState?.loading;
   const auth = store.state?.user?.auth;
+
+  const {setLoading} = useLoading(store);
+
+  const [form, setForm] = React.useState<formType>({
+    image: '',
+  });
 
   const _renderEdit = () => {
     return (
@@ -41,6 +54,16 @@ const UserProfile = (props: any) => {
     );
   };
 
+  const handleUpdateProfilePic = async () => {
+    try {
+      const data = await UPDATE_PROFILE({image: form.image});
+      store.dispatch({type: 'UPDATE_PROFILE', payload: data.user});
+      setForm({image: ''});
+    } catch (error) {
+      console.log('user data', error);
+    }
+  };
+
   const handleGetImage = () => {
     ImageCropPicker.openPicker({
       width: 200,
@@ -48,7 +71,7 @@ const UserProfile = (props: any) => {
       cropping: true,
     })
       .then(image => {
-        console.log('image', image);
+        setForm(prev => ({...prev, image: image}));
       })
       .catch(err => {
         console.log('err', err);
@@ -77,7 +100,7 @@ const UserProfile = (props: any) => {
                 {_renderEdit()}
                 <Image
                   source={{
-                    uri: `${BASE_URL}storage/2024/devices/0MVHvPWu0S1711262794.jpg`, // dummy profile url
+                    uri: `${BASE_URL}${auth?.profile_path}`, // dummy profile url
                   }}
                   resizeMode="cover"
                   style={styles.profilePic}
@@ -129,6 +152,14 @@ const UserProfile = (props: any) => {
             </View>
           </View>
         </KeyboardAwareScrollView>
+        <View style={{padding: 20}}>
+          <Button
+            onPress={() => {
+              handleUpdateProfilePic();
+            }}>
+            Update
+          </Button>
+        </View>
       </ImageBackground>
     </View>
   );

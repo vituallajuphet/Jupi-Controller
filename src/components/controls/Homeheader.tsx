@@ -3,6 +3,7 @@ import React, {useContext} from 'react';
 import {LoginContext} from '../../context';
 import {useNavigation} from '@react-navigation/native';
 import {StoreContext} from '../../context/store';
+import {BASE_URL, URL} from '../../utils';
 
 const Homeheader = () => {
   const store = useContext(StoreContext);
@@ -17,7 +18,10 @@ const Homeheader = () => {
   return (
     <TouchableOpacity onPress={jumpToProfile} style={styles.container}>
       <View style={styles.inner}>
-        <Image style={styles.img} source={require('../../images/img.png')} />
+        <Image
+          style={styles.img}
+          source={{uri: `${BASE_URL}${auth?.profile_path}`}}
+        />
         <View>
           <Text style={styles.name}>{auth.name}</Text>
           <Text style={{fontSize: 14}}>All is in your hand now</Text>
