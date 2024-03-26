@@ -23,7 +23,11 @@ import {Collapsable} from '../../../components/controls/collapsable';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {StoreContext} from '../../../context/store';
 import {useLoading} from '../../../context/hooks';
-import {UPDATE_PROFILE} from '../../../context/actions';
+import {
+  UPDATE_PROFILE,
+  UPDATE_PROFILE_INFO,
+  UpdateProfileType,
+} from '../../../context/actions';
 
 type UserProfileProps = {};
 type formType = {
@@ -43,6 +47,14 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
 
   const {setLoading} = useLoading(store);
 
+  const [profile, setProfile] = React.useState<UpdateProfileType>({
+    name: '',
+    email: '',
+    age: '',
+    contact: '',
+    gender: '',
+  });
+
   const [form, setForm] = React.useState<formType>({
     image: '',
     current_password: '',
@@ -51,6 +63,14 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
     cover_image: '',
     contact: '',
   });
+
+  useEffect(() => {
+    setProfile(prev => ({
+      ...prev,
+      name: auth?.name,
+      email: auth?.email,
+    }));
+  }, []);
 
   const _renderEdit = () => {
     return (
@@ -69,6 +89,14 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
       const data = await UPDATE_PROFILE({image: form.image});
       store.dispatch({type: 'UPDATE_PROFILE', payload: data.user});
       setForm({image: ''});
+    } catch (error) {
+      console.log('user data', error);
+    }
+  };
+
+  const handleUpdateInfo = async () => {
+    try {
+      const data = await UPDATE_PROFILE_INFO(profile);
     } catch (error) {
       console.log('user data', error);
     }
@@ -160,19 +188,25 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                       <Textfield
                         label="Name"
                         onChangeText={text => {
-                          handleChange('name', text);
+                          setProfile(prev => ({...prev, name: text}));
                         }}
-                        value={auth.name}
+                        value={profile?.name}
                       />
                     </View>
                     <Textfield
                       editable={false}
                       keyboardType="email-address"
+                      onChangeText={text => {
+                        setProfile(prev => ({...prev, email: text}));
+                      }}
                       label="Email"
-                      value={auth?.email}
+                      value={profile?.email}
                     />
                     <View style={styles.btnContainer}>
                       <Button
+                        onPress={() => {
+                          handleUpdateInfo();
+                        }}
                         style={{
                           width: 90,
                           marginTop: 15,

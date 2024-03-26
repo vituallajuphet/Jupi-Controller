@@ -2,6 +2,13 @@ import axios from 'axios';
 import {URL, getImageBase64, getToken} from '../../utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+export type UpdateProfileType = {
+  name?: string;
+  email?: string;
+  age?: string;
+  gender?: string;
+  contact?: string;
+};
 type userRegisterType = {
   name: string;
   email: string;
@@ -12,6 +19,16 @@ type userRegisterType = {
 type LoginType = {
   email: string;
   password: string;
+};
+
+export const headerSettings = (token?: string | null) => {
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    },
+  };
 };
 
 export const REGISTER_USER = async ({
@@ -51,15 +68,22 @@ export const LOGIN = async (payload: LoginType) => {
 export const LOGOUT = async () => {
   try {
     const token = await getToken();
+    const data = await axios.post(`${URL}logout`, {}, headerSettings(token));
+    return data.data;
+  } catch (error: any) {
+    throw error.response?.data;
+  }
+};
+
+export const UPDATE_PROFILE_INFO = async (payload: UpdateProfileType) => {
+  try {
+    const token = await getToken();
     const data = await axios.post(
-      `${URL}logout`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
+      `${URL}profile`,
+      {...payload},
+      headerSettings(token),
     );
+
     return data.data;
   } catch (error: any) {
     throw error.response?.data;
@@ -76,13 +100,11 @@ export const UPDATE_PROFILE = async (payload: {image: undefined}) => {
       formdata.append('image', await getImageBase64(payload?.image));
     }
 
-    const data = await axios.post(`${URL}profile-picture/`, formdata, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const data = await axios.post(
+      `${URL}profile-picture/`,
+      formdata,
+      headerSettings(token),
+    );
 
     return data.data;
   } catch (error: any) {
@@ -94,11 +116,7 @@ export const GET_TOKEN = async () => {
   try {
     const token = await AsyncStorage.getItem('appToken');
     if (token) {
-      const data = await axios.get(`${URL}connected`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const data = await axios.get(`${URL}connected`, headerSettings(token));
       return data.data;
     }
   } catch (e: any) {
