@@ -11,7 +11,12 @@ import React, {FC, useContext, useEffect, useMemo} from 'react';
 
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-import {Button, Loading, Textfield} from '../../../components/controls';
+import {
+  Button,
+  Confirmation,
+  Loading,
+  Textfield,
+} from '../../../components/controls';
 import Header from '../../../components/controls/Header';
 import {useNavigation} from '@react-navigation/native';
 import {withLoading} from '../../../hoc';
@@ -44,15 +49,15 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
   const nav = useNavigation();
   const loading = store.state?.appState?.loading;
   const auth = store.state?.user?.auth;
+  const [open, setOpen] = React.useState(false);
 
   const {setLoading} = useLoading(store);
 
   const [profile, setProfile] = React.useState<UpdateProfileType>({
     name: '',
     email: '',
-    age: '21',
-    contact: '094123123',
-    gender: 'Male',
+    contact: '123',
+    username: '',
   });
 
   const [form, setForm] = React.useState<formType>({
@@ -69,6 +74,8 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
       ...prev,
       name: auth?.name,
       email: auth?.email,
+      contact: auth?.meta?.meta?.contact,
+      username: auth?.meta?.meta?.username,
     }));
   }, []);
 
@@ -95,11 +102,15 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
   };
 
   const handleUpdateInfo = async () => {
+    setLoading(true);
     try {
       const data = await UPDATE_PROFILE_INFO(profile);
-      console.log('data profile', data);
+      store.dispatch({type: 'UPDATE_PROFILE', payload: data.user});
+      setOpen(false);
+      setLoading(false);
     } catch (error) {
       console.log('user data', error);
+      setLoading(false);
     }
   };
 
@@ -135,6 +146,18 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
 
   return (
     <View style={styles.container}>
+      <Confirmation
+        open={open}
+        title="Update Confirmation"
+        btnText="Save"
+        text="Are you sure to update your information?"
+        onConfirm={() => {
+          handleUpdateInfo();
+        }}
+        onClose={() => {
+          setOpen(false);
+        }}
+      />
       <ImageBackground
         style={styles.bg}
         source={require('../../../images/bg.jpg')}
@@ -178,7 +201,7 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                   marginTop: 30,
                 }}>
                 <Collapsable
-                  height={260}
+                  height={460}
                   headerIcon={<FIcon name="user" size={20} />}
                   title="Personal Information">
                   <View
@@ -187,26 +210,46 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                     }}>
                     <View style={{marginBottom: 15}}>
                       <Textfield
-                        label="Name"
+                        label="Full Name"
                         onChangeText={text => {
                           setProfile(prev => ({...prev, name: text}));
                         }}
                         value={profile?.name}
                       />
                     </View>
+                    <View style={{marginBottom: 15}}>
+                      <Textfield
+                        label="Username"
+                        onChangeText={text => {
+                          setProfile(prev => ({...prev, username: text}));
+                        }}
+                        value={profile?.username}
+                      />
+                    </View>
+                    <View style={{marginBottom: 15}}>
+                      <Textfield
+                        editable={false}
+                        keyboardType="email-address"
+                        onChangeText={text => {
+                          setProfile(prev => ({...prev, email: text}));
+                        }}
+                        label="Email"
+                        value={profile?.email}
+                      />
+                    </View>
+
                     <Textfield
-                      editable={false}
-                      keyboardType="email-address"
+                      keyboardType="number-pad"
                       onChangeText={text => {
-                        setProfile(prev => ({...prev, email: text}));
+                        setProfile(prev => ({...prev, contact: text}));
                       }}
-                      label="Email"
-                      value={profile?.email}
+                      label="Contact No."
+                      value={profile?.contact}
                     />
                     <View style={styles.btnContainer}>
                       <Button
                         onPress={() => {
-                          handleUpdateInfo();
+                          setOpen(true);
                         }}
                         style={{
                           width: 60,

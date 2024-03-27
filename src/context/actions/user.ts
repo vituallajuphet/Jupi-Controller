@@ -9,6 +9,7 @@ export type UpdateProfileType = {
   gender?: string;
   contact?: string;
   meta?: string;
+  username?: string;
 };
 type userRegisterType = {
   name: string;
@@ -69,7 +70,15 @@ export const LOGIN = async (payload: LoginType) => {
 export const LOGOUT = async () => {
   try {
     const token = await getToken();
-    const data = await axios.post(`${URL}logout`, {}, headerSettings(token));
+    const data = await axios.post(
+      `${URL}logout`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
     return data.data;
   } catch (error: any) {
     throw error.response?.data;
