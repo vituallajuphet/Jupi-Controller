@@ -8,6 +8,7 @@ export type UpdateProfileType = {
   age?: string;
   gender?: string;
   contact?: string;
+  meta?: string;
 };
 type userRegisterType = {
   name: string;
@@ -76,12 +77,20 @@ export const LOGOUT = async () => {
 };
 
 export const UPDATE_PROFILE_INFO = async (payload: UpdateProfileType) => {
+  const {name, email, ...rest} = payload;
+
+  const meta = JSON.stringify(rest);
+
   try {
     const token = await getToken();
-    const data = await axios.post(
+    const data = await axios.put(
       `${URL}profile`,
-      {...payload},
-      headerSettings(token),
+      {name, email, meta},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     );
 
     return data.data;

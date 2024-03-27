@@ -36,7 +36,7 @@ const Button = forwardRef<TouchableOpacity, ButtonProps>((props, ref) => {
 
 const styles = StyleSheet.create({
   button: {
-    padding: 14,
+    padding: 12,
     paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',

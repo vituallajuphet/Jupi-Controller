@@ -50,9 +50,9 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
   const [profile, setProfile] = React.useState<UpdateProfileType>({
     name: '',
     email: '',
-    age: '',
-    contact: '',
-    gender: '',
+    age: '21',
+    contact: '094123123',
+    gender: 'Male',
   });
 
   const [form, setForm] = React.useState<formType>({
@@ -97,6 +97,7 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
   const handleUpdateInfo = async () => {
     try {
       const data = await UPDATE_PROFILE_INFO(profile);
+      console.log('data profile', data);
     } catch (error) {
       console.log('user data', error);
     }
@@ -208,7 +209,7 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                           handleUpdateInfo();
                         }}
                         style={{
-                          width: 90,
+                          width: 60,
                           marginTop: 15,
                         }}>
                         Save
@@ -257,7 +258,7 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                           updatePassword();
                         }}
                         style={{
-                          width: 90,
+                          width: 60,
                           marginTop: 15,
                         }}>
                         Save
