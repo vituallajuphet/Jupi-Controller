@@ -50,6 +50,7 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
   const loading = store.state?.appState?.loading;
   const auth = store.state?.user?.auth;
   const [open, setOpen] = React.useState(false);
+  const [openImageConfirm, setImageConfirm] = React.useState(false);
 
   const {setLoading} = useLoading(store);
 
@@ -136,6 +137,7 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
     })
       .then(image => {
         setForm(prev => ({...prev, image: image}));
+        setImageConfirm(true);
       })
       .catch(err => {
         console.log('err', err);
@@ -156,6 +158,19 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
         }}
         onClose={() => {
           setOpen(false);
+        }}
+      />
+      <Confirmation
+        open={openImageConfirm}
+        title="Confirmation"
+        btnText="Yes"
+        text="You are about to update your profile. Are you sure to continue?"
+        onConfirm={() => {
+          handleUpdateProfilePic();
+          setImageConfirm(false);
+        }}
+        onClose={() => {
+          setImageConfirm(false);
         }}
       />
       <ImageBackground
