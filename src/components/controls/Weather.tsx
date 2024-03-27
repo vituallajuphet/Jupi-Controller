@@ -19,14 +19,14 @@ const WeatherHome: FC<any> = props => {
               <Icon name="zap" size={25} />
               <Text style={styles.text}>Active Devices</Text>
             </View>
-            <Text style={[styles.text, styles.textVal]}>{active}</Text>
+            <Text style={[styles.text, styles.textVal]}>{active || 0}</Text>
           </View>
           <View style={[st('f-row items-center j-between')]}>
             <View style={[st('f-row items-center gap-x-3')]}>
               <Icon name="zap-off" size={25} />
               <Text style={styles.text}>Inactive</Text>
             </View>
-            <Text style={[styles.text, styles.textVal]}>{inactive}</Text>
+            <Text style={[styles.text, styles.textVal]}>{inactive || 0}</Text>
           </View>
         </View>
       </View>
