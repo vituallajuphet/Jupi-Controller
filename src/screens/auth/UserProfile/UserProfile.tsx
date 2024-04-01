@@ -6,6 +6,7 @@ import {
   Image,
   Touchable,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import React, {FC, useContext, useEffect, useMemo} from 'react';
 
@@ -29,6 +30,7 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import {StoreContext} from '../../../context/store';
 import {useLoading} from '../../../context/hooks';
 import {
+  UPDATE_PASSWORD,
   UPDATE_PROFILE,
   UPDATE_PROFILE_INFO,
   UpdateProfileType,
@@ -49,8 +51,15 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
   const nav = useNavigation();
   const loading = store.state?.appState?.loading;
   const auth = store.state?.user?.auth;
-  const [open, setOpen] = React.useState(false);
-  const [openImageConfirm, setImageConfirm] = React.useState(false);
+  const [confirmation, setConfirmation] = React.useState({
+    open: false,
+    title: '',
+    text: '',
+    btnText: '',
+    onConfirm: async () => {},
+  });
+
+  const [errors, setErrors] = React.useState<any>([]);
 
   const {setLoading} = useLoading(store);
 
@@ -96,9 +105,8 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
     try {
       const data = await UPDATE_PROFILE({image: form.image});
       store.dispatch({type: 'UPDATE_PROFILE', payload: data.user});
-      setForm({image: ''});
     } catch (error) {
-      console.log('user data', error);
+      console.log('user datxx', error);
     }
   };
 
@@ -107,21 +115,30 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
     try {
       const data = await UPDATE_PROFILE_INFO(profile);
       store.dispatch({type: 'UPDATE_PROFILE', payload: data.user});
-      setOpen(false);
+      setConfirmation({
+        ...confirmation,
+        open: false,
+      });
       setLoading(false);
     } catch (error) {
-      console.log('user data', error);
+      console.log('user dataxxx', error);
       setLoading(false);
     }
   };
 
-  const updatePassword = async () => {
+  const handleUpdatePassword = async () => {
+    const passwordaData = {
+      current_password: form.current_password,
+      password: form.password,
+      password_confirmation: form.password_confirmation,
+    };
+
     try {
-      const data = await UPDATE_PROFILE({image: form.image});
-      store.dispatch({type: 'UPDATE_PROFILE', payload: data.user});
-      setForm({image: ''});
-    } catch (error) {
-      console.log('user data', error);
+      const data = await UPDATE_PASSWORD(passwordaData);
+      store.dispatch({type: 'UPDATE_PASSWORD', payload: data.user});
+    } catch (error: any) {
+      console.log('errors', error);
+      setErrors(error.errors);
     }
   };
 
@@ -137,7 +154,36 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
     })
       .then(image => {
         setForm(prev => ({...prev, image: image}));
-        setImageConfirm(true);
+        setConfirmation({
+          open: true,
+          title: 'Update Profile Picture',
+          text: 'Are you sure to update your profile picture?',
+          btnText: 'Save',
+          onConfirm: handleUpdateProfilePic,
+        });
+      })
+      .catch(err => {
+        console.log('err', err);
+      });
+  };
+
+  const handleCoverimage = () => {
+    ImageCropPicker.openPicker({
+      width: 200,
+      height: 200,
+      cropping: true,
+    })
+      .then(image => {
+        setForm(prev => ({...prev, image: image}));
+        setConfirmation({
+          open: true,
+          title: 'Update Profile Picture',
+          text: 'Are you sure to update your cover picture?',
+          btnText: 'Save',
+          onConfirm: () => {
+            //
+          },
+        });
       })
       .catch(err => {
         console.log('err', err);
@@ -149,30 +195,19 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
   return (
     <View style={styles.container}>
       <Confirmation
-        open={open}
-        title="Update Confirmation"
-        btnText="Save"
-        text="Are you sure to update your information?"
-        onConfirm={() => {
-          handleUpdateInfo();
+        open={confirmation.open}
+        title={confirmation.title}
+        btnText={confirmation.btnText}
+        text={confirmation.text}
+        onConfirm={async () => {
+          console.log('confirmation.onConfirm', confirmation.onConfirm);
+          await confirmation.onConfirm();
         }}
         onClose={() => {
-          setOpen(false);
+          setConfirmation(prev => ({...prev, open: false}));
         }}
       />
-      <Confirmation
-        open={openImageConfirm}
-        title="Confirmation"
-        btnText="Yes"
-        text="You are about to update your profile. Are you sure to continue?"
-        onConfirm={() => {
-          handleUpdateProfilePic();
-          setImageConfirm(false);
-        }}
-        onClose={() => {
-          setImageConfirm(false);
-        }}
-      />
+
       <ImageBackground
         style={styles.bg}
         source={require('../../../images/bg.jpg')}
@@ -183,7 +218,12 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
               style={styles.cover}
               source={require('./assets/cover.jpg')}
               resizeMode="cover">
-              <View style={styles.overlay} />
+              <Pressable
+                style={styles.overlay}
+                onPress={() => {
+                  console.log('xxxx');
+                }}
+              />
               <View style={styles.profile}>
                 {_renderEdit()}
                 <Image
@@ -264,7 +304,15 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                     <View style={styles.btnContainer}>
                       <Button
                         onPress={() => {
-                          setOpen(true);
+                          setConfirmation({
+                            open: true,
+                            title: 'Confirmation',
+                            text: 'Are you sure to update your profile?',
+                            btnText: 'Update',
+                            onConfirm: () => {
+                              handleUpdateInfo();
+                            },
+                          });
                         }}
                         style={{
                           width: 60,
@@ -286,6 +334,7 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                     <View style={{marginBottom: 15}}>
                       <Textfield
                         label="Current Password"
+                        errorMessage={errors.current_password}
                         value={form.current_password}
                         onChangeText={text => {
                           handleChange('current_password', text);
@@ -294,6 +343,7 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                     </View>
                     <View style={{marginBottom: 15}}>
                       <Textfield
+                        errorMessage={errors.password}
                         label="New Password"
                         value={form.password}
                         onChangeText={text => {
@@ -303,6 +353,7 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                     </View>
                     <View>
                       <Textfield
+                        errorMessage={errors.password_confirmation}
                         label="Confirm Password"
                         value={form.password_confirmation}
                         onChangeText={text => {
@@ -310,10 +361,19 @@ const UserProfile: FC<UserProfileProps> = (props: any) => {
                         }}
                       />
                     </View>
+
                     <View style={styles.btnContainer}>
                       <Button
                         onPress={() => {
-                          updatePassword();
+                          setConfirmation({
+                            open: true,
+                            title: 'Confirmation',
+                            text: 'Are you sure to update your password?',
+                            btnText: 'Update',
+                            onConfirm: () => {
+                              handleUpdateInfo();
+                            },
+                          });
                         }}
                         style={{
                           width: 60,

@@ -19,6 +19,7 @@ const LoginScreen: React.FC<any> = props => {
   const store = useContext(StoreContext);
   const [supported, setSupported] = useState(false);
   const {navigate} = props.navigation;
+  const [errors, setErrors] = useState<any>(undefined);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -85,8 +86,8 @@ const LoginScreen: React.FC<any> = props => {
         setLoading(false);
       }
     } catch (error: any) {
+      setErrors(error.errors);
       setLoading(false);
-      throw error.response?.data;
     }
   };
 
@@ -115,13 +116,6 @@ const LoginScreen: React.FC<any> = props => {
               }}
               value={email}
             />
-            {/* {context.errors ? (
-              <View style={styles.errorContainer}>
-                <Text style={styles.errorTxt}>
-                  {context?.errors?.login || context?.errors?.email}
-                </Text>
-              </View>
-            ) : null} */}
           </View>
 
           <View style={styles.inputContainer}>
@@ -134,11 +128,13 @@ const LoginScreen: React.FC<any> = props => {
               placeholder="Password"
               style={styles.input}
             />
-            {/* {context.errors ? (
+            {errors ? (
               <View style={styles.errorContainer}>
-                <Text style={styles.errorTxt}>{context?.errors?.password}</Text>
+                <Text style={styles.errorTxt}>
+                  {errors?.login || errors?.email}
+                </Text>
               </View>
-            ) : null} */}
+            ) : null}
           </View>
           <TouchableOpacity
             style={styles.button}

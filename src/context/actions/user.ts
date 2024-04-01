@@ -11,6 +11,13 @@ export type UpdateProfileType = {
   meta?: string;
   username?: string;
 };
+
+type passwordUpdateType = {
+  password?: string;
+  current_password?: string;
+  password_confirmation?: string;
+};
+
 type userRegisterType = {
   name: string;
   email: string;
@@ -95,6 +102,26 @@ export const UPDATE_PROFILE_INFO = async (payload: UpdateProfileType) => {
     const data = await axios.put(
       `${URL}profile`,
       {name, email, meta},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    return data.data;
+  } catch (error: any) {
+    throw error.response?.data;
+  }
+};
+export const UPDATE_PASSWORD = async (payload: passwordUpdateType) => {
+  const {password, current_password, password_confirmation} = payload;
+
+  try {
+    const token = await getToken();
+    const data = await axios.put(
+      `${URL}profile-password`,
+      {password, current_password, password_confirmation},
       {
         headers: {
           Authorization: `Bearer ${token}`,

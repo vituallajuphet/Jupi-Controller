@@ -9,7 +9,7 @@ import React from 'react';
 import {Text} from '.';
 
 type TextfieldProps = TextInputProps & {
-  errorMessage?: string;
+  errorMessage?: string | Array<string>;
   label?: string;
 };
 
@@ -24,17 +24,24 @@ const Textfield = (props: TextfieldProps) => {
 
   const colorborder = errorMessage ? '#fa8d8d' : '#fff';
 
+  const _renderError = () => {
+    if (Array.isArray(errorMessage)) {
+      return errorMessage.map((error, index) => (
+        <Text key={index} style={[styles.errorTxt, {marginBottom: 5}]}>
+          {error}
+        </Text>
+      ));
+    }
+    return <Text style={styles.errorTxt}>{errorMessage}</Text>;
+  };
+
   return (
     <>
       <Text style={[styles.label, {color: colorborder}]}>{label}</Text>
       <View style={[styles.container, {borderColor: colorborder}]}>
         <TextInput {...props} style={[styles.textInput, inputStyle]} />
       </View>
-      {errorMessage ? (
-        <View style={styles.error}>
-          <Text style={styles.errorTxt}>{errorMessage}</Text>
-        </View>
-      ) : null}
+      {errorMessage ? <View style={styles.error}>{_renderError()}</View> : null}
     </>
   );
 };
